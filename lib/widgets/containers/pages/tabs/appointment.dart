@@ -33,7 +33,11 @@ class _AppointmentPageState extends State<AppointmentPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseQuery firebaseQuery = FirebaseQuery();
 
-  List<String> dropdownOptions = ['Clearance', 'Certificate', 'ID'];
+  List<String> dropdownOptions = [
+    'Clearance',
+    'Certificate',
+    'Identification Card'
+  ];
   String selectedOption = '';
 
   void handleDropdownChange(String newValue) {
@@ -165,7 +169,8 @@ class _AppointmentPageState extends State<AppointmentPage> {
                 ),
                 const SizedBox(height: 16),
                 Visibility(
-                    visible: selectedOption == 'ID' ? true : false,
+                    visible:
+                        selectedOption == 'Identification Card' ? true : false,
                     child: Column(
                       children: [
                         CoreTextfield(
@@ -179,12 +184,12 @@ class _AppointmentPageState extends State<AppointmentPage> {
                         ),
                         const SizedBox(height: 16),
                         CoreTextfield(
-                          labelText: 'Weight',
+                          labelText: 'Weight (kg)',
                           controller: _weight,
                         ),
                         const SizedBox(height: 16),
                         CoreTextfield(
-                          labelText: 'Height',
+                          labelText: 'Height (cm)',
                           controller: _height,
                         ),
                         const SizedBox(height: 16),
@@ -216,27 +221,29 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                     ]).show()
                               });
                     } else if (selectedOption == 'Clearance') {
-                      firebaseQuery.setClearance(_auth.currentUser!.uid, _startDate,
-                          purposeController.text).then((value) => {
-                        Alert(
-                            context: context,
-                            type: AlertType.success,
-                            desc: "Appointment success",
-                            closeFunction: null,
-                            buttons: [
-                              DialogButton(
-                                  onPressed: (() {
-                                    Navigator.pop(context);
-                                  }),
-                                  child: const Text('OK'))
-                            ]).show()
-                      });
+                      firebaseQuery
+                          .setClearance(_auth.currentUser!.uid, _startDate,
+                              purposeController.text)
+                          .then((value) => {
+                                Alert(
+                                    context: context,
+                                    type: AlertType.success,
+                                    desc: "Appointment success",
+                                    closeFunction: null,
+                                    buttons: [
+                                      DialogButton(
+                                          onPressed: (() {
+                                            Navigator.pop(context);
+                                          }),
+                                          child: const Text('OK'))
+                                    ]).show()
+                              });
                     } else {
                       firebaseQuery
                           .setBrgID(_auth.currentUser!.uid, _startDate,
                               _sex.text, _age.text, _weight.text, _height.text)
                           .then((value) => {
-                              // print(value.toString())
+                                // print(value.toString())
                                 Alert(
                                     context: context,
                                     type: AlertType.success,
