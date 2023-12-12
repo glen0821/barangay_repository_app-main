@@ -102,4 +102,12 @@ class RegisterFunctions {
 
     return returnFlag;
   }
+  static String nameConcat(
+    String firstName,
+    String middleName,
+    String lastName,
+    String suffixName
+  ) {
+    return "$firstName $middleName $lastName $suffixName";
+  }
 }
