@@ -295,33 +295,50 @@ class FirebaseQuery {
   }
 
   Future<bool> setBrgID(
-    String userId,
-    dynamic appointmentDate,
-    String sex,
-    String age,
-    String weight,
-    String height,
-  ) async {
+      String userId,
+      dynamic appointmentDate,
+      String sex,
+      String age,
+      String weight,
+      String height,
+      String amount,
+      Map<String, dynamic> paypalResult,
+      ) async {
     FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
     bool returnFlag = false;
     DateTime currentTime = DateTime.now();
     int epochTime = currentTime.millisecondsSinceEpoch;
     final docRef = firestoreDB.collection("votersList").doc(userId);
+
     docRef.get().then(
-      (DocumentSnapshot doc) {
+          (DocumentSnapshot doc) {
         final data = doc.data() as Map<String, dynamic>;
         final certificateDetails = <String, dynamic>{
           "completeName": data['completeName'],
           "address": data['completeAddress'],
           "lengthOfStay": data['lengthOfStay'],
           "bgyClearanceCounter": 1,
-          "dateOfAppointment": DateFormat('yyy-M-d').format(DateTime(appointmentDate.year, appointmentDate.month, appointmentDate.day)),
+          "dateOfAppointment": DateFormat('yyy-M-d').format(
+            DateTime(appointmentDate.year, appointmentDate.month, appointmentDate.day),
+          ),
           "appointmentOwner": userId,
           "gender": sex,
           "age": age,
           "weight": weight,
           "height": height,
-          "createdAt": DateFormat("MMMM d, yyy 'at h:mm:ss a UTC+8").format(DateTime(currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.minute, currentTime.second)),
+          "amountPaid": amount,
+          "transactionId": paypalResult['response']['id'],
+          "transactionDate": currentTime.toUtc().toString(),
+          "createdAt": DateFormat("MMMM d, yyy 'at h:mm:ss a UTC+8").format(
+            DateTime(
+              currentTime.year,
+              currentTime.month,
+              currentTime.day,
+              currentTime.hour,
+              currentTime.minute,
+              currentTime.second,
+            ),
+          ),
         };
         firestoreDB
             .collection("barangayID")
@@ -332,6 +349,7 @@ class FirebaseQuery {
       },
       onError: (e) => print("Error getting document: $e"),
     );
+
     return returnFlag;
   }
 

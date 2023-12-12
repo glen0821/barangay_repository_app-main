@@ -3,6 +3,7 @@ import 'package:barangay_repository_app/widgets/core/core_dropdown/core_dropdown
 import 'package:barangay_repository_app/widgets/core/core_textfield/core_textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_paypal/flutter_paypal.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:barangay_repository_app/constants/colors.dart';
 
@@ -33,6 +34,9 @@ class _AppointmentPageState extends State<AppointmentPage> {
   final TextEditingController complaintController = TextEditingController();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String selectedGender = 'Male';
+
   FirebaseQuery firebaseQuery = FirebaseQuery();
 
   List<String> dropdownOptions = [
@@ -41,11 +45,23 @@ class _AppointmentPageState extends State<AppointmentPage> {
     'Identification Card',
     'Complaint'
   ];
+
+  List<String> gender = [
+    'Male',
+    'Female',
+  ];
+
   String selectedOption = '';
 
   void handleDropdownChange(String newValue) {
     setState(() {
       selectedOption = newValue;
+    });
+  }
+
+  void handleGenderChange(String newValue) {
+    setState(() {
+      selectedGender = newValue;
     });
   }
 
@@ -111,7 +127,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text(
-                  'Appointment Details',
+                  'Book a Appointment',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
@@ -185,12 +201,15 @@ class _AppointmentPageState extends State<AppointmentPage> {
                 const SizedBox(height: 16),
                 Visibility(
                     visible:
-                        selectedOption == 'Identification Card' ? true : false,
+                    selectedOption == 'Identification Card' ? true : false,
                     child: Column(
                       children: [
-                        CoreTextfield(
-                          labelText: 'Sex',
-                          controller: _sex,
+                        CoreDropdown(
+                          labelText: 'Select Gender',
+                          options: gender,
+                          selectedOption: selectedGender,
+                          onChanged: handleGenderChange,
+                          enabled: true,
                         ),
                         const SizedBox(height: 16),
                         CoreTextfield(
@@ -208,13 +227,13 @@ class _AppointmentPageState extends State<AppointmentPage> {
                           controller: _height,
                         ),
                         const SizedBox(height: 16),
-                        ElevatedButton(onPressed: (){
-                          print("Test");
-                        }, child: const Text('Add Payment'))
+                        // ElevatedButton(onPressed: (){
+                        //   print("Test");
+                        // }, child: const Text('Add Payment'))
                       ],
                     )),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     // Handle save appointment logic
                     // firebaseQuery.appointOrRequestAppointment(
                     //     {_certificateController.text, _startDate, _endDate},
@@ -275,29 +294,86 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                     ]).show()
                               });
                     } else {
-                      firebaseQuery
-                          .setBrgID(_auth.currentUser!.uid, _startDate,
-                              _sex.text, _age.text, _weight.text, _height.text)
-                          .then((value) => {
-                                // print(value.toString())
-                                Alert(
-                                    context: context,
-                                    type: AlertType.success,
-                                    desc: "Appointment success",
-                                    closeFunction: null,
-                                    buttons: [
-                                      DialogButton(
-                                          onPressed: (() {
-                                            Navigator.pop(context);
-                                          }),
-                                          child: const Text('OK'))
-                                    ]).show()
-                              });
+                      Map<String, dynamic>? result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => UsePaypal(
+                            sandboxMode: true,
+                            clientId: "AeGPFVZ_bq0ezU447uNzfTMFEpjkDXELBaL3FwqcC9hiv5nQXLE2_mPa6tZJIbPpIroVipb6i127CEh4",
+                            secretKey: "EGyYCvCySIuhVPzeWOr4lW88tjG-5pB19AbPBDmKem7jAWfAdNrUUF6q6nLtDGP5pivM1zUkfwH41oE1",
+                            returnURL: "https://samplesite.com/return",
+                            cancelURL: "https://samplesite.com/cancel",
+                              transactions: const [
+                                {
+                                  "amount": {
+                                    "total": '5.00',
+                                    "currency": "PHP",
+                                    "details": {
+                                      "subtotal": '5.00',
+                                    }
+                                  },
+                                  "description":
+                                  "Your ID order description.",
+                                  "item_list": {
+                                    "items": [
+                                      {
+                                        "name": "ID CARD",
+                                        "quantity": 1,
+                                        "price": '5.00',
+                                        "currency": "PHP"
+                                      }
+                                    ],
+                                  }
+                                }
+                              ],
+                              note: "Contact us for any questions on your order.",
+                              onSuccess: (Map<String, dynamic> paypalResult) async {
+                              print("onSuccess: $paypalResult");
+
+                              await firebaseQuery.setBrgID(
+                                _auth.currentUser!.uid,
+                                _startDate,
+                                selectedGender,
+                                _age.text,
+                                _weight.text,
+                                _height.text,
+                                '5.00',
+                                paypalResult['response']['id'],
+                              );
+                              Alert(
+                                context: context,
+                                type: AlertType.success,
+                                desc: "Appointment success",
+                                closeFunction: null,
+                                buttons: [
+                                  DialogButton(
+                                    onPressed: (() {
+                                      Navigator.pop(context);
+                                    }),
+                                    child: const Text('OK'),
+                                  )
+                                ],
+                              ).show();
+                            },
+                            onError: (error) {
+                                print("onError: $error");
+                              },
+                              onCancel: (params) {
+                               print('cancelled: $params');
+                            }
+                          ),
+                        ),
+                      );
                     }
                   },
-                  child: const Text('Save Appointment'),
                   style: ElevatedButton.styleFrom(
-                    primary: AppColors.primaryColor,
+                    backgroundColor: AppColors.primaryColor,
+                  ),
+                  child: const Text(
+                    'Proceed to payment',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],
