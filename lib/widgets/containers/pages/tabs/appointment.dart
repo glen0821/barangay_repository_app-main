@@ -30,13 +30,16 @@ class _AppointmentPageState extends State<AppointmentPage> {
 
   final TextEditingController purposeController = TextEditingController();
 
+  final TextEditingController complaintController = TextEditingController();
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseQuery firebaseQuery = FirebaseQuery();
 
   List<String> dropdownOptions = [
     'Clearance',
     'Certificate',
-    'Identification Card'
+    'Identification Card',
+    'Complaint'
   ];
   String selectedOption = '';
 
@@ -140,6 +143,18 @@ class _AppointmentPageState extends State<AppointmentPage> {
                         border: OutlineInputBorder(),
                       ),
                     )),
+                Visibility(
+                    visible: selectedOption == 'Complaint'
+                        ? true
+                        : false,
+                    child: TextFormField(
+                      maxLines: 3,
+                      controller: complaintController,
+                      decoration: const InputDecoration(
+                        labelText: 'Complaint',
+                        border: OutlineInputBorder(),
+                      ),
+                    )),
                 const SizedBox(height: 16),
                 // const Text(
                 //   'Priority',
@@ -224,6 +239,24 @@ class _AppointmentPageState extends State<AppointmentPage> {
                       firebaseQuery
                           .setClearance(_auth.currentUser!.uid, _startDate,
                               purposeController.text)
+                          .then((value) => {
+                                Alert(
+                                    context: context,
+                                    type: AlertType.success,
+                                    desc: "Appointment success",
+                                    closeFunction: null,
+                                    buttons: [
+                                      DialogButton(
+                                          onPressed: (() {
+                                            Navigator.pop(context);
+                                          }),
+                                          child: const Text('OK'))
+                                    ]).show()
+                              });
+                    } else if (selectedOption == 'Complaint') {
+                      firebaseQuery
+                          .setComplaint(_auth.currentUser!.uid, _startDate,
+                              complaintController.text)
                           .then((value) => {
                                 Alert(
                                     context: context,
