@@ -260,6 +260,40 @@ class FirebaseQuery {
     return returnFlag;
   }
 
+    Future<bool> setComplaint(
+    String userId,
+    DateTime appointmentDate,
+    String complaint,
+  ) async {
+    FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
+    bool returnFlag = false;
+    DateTime currentTime = DateTime.now();
+    int epochTime = currentTime.millisecondsSinceEpoch;
+    final docRef = firestoreDB.collection("votersList").doc(userId);
+    docRef.get().then(
+      (DocumentSnapshot doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        final certificateDetails = <String, dynamic>{
+          "completeName": data['completeName'],
+          "lengthOfStay": data['lengthOfStay'],
+          "dateOfAppointment": DateFormat('yyy-M-d').format(DateTime(appointmentDate.year, appointmentDate.month, appointmentDate.day)),
+          "appointmentOwner": userId,
+          "complaint": complaint,
+          "address": data['completeAddress'],
+          "createdAt": DateFormat("MMMM d, yyy 'at h:mm:ss a UTC+8").format(DateTime(currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.minute, currentTime.second)),
+        };
+        firestoreDB
+            .collection("Complaints")
+            .doc(epochTime.toString())
+            .set(certificateDetails)
+            .then((value) => returnFlag = true)
+            .catchError((error) => print('error: $error'));
+      },
+      onError: (e) => print("Error getting document: $e"),
+    );
+    return returnFlag;
+  }
+
   Future<bool> setBrgID(
     String userId,
     dynamic appointmentDate,
