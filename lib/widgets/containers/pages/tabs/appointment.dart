@@ -208,6 +208,9 @@ class _AppointmentPageState extends State<AppointmentPage> {
                           controller: _height,
                         ),
                         const SizedBox(height: 16),
+                        ElevatedButton(onPressed: (){
+                          print("Test");
+                        }, child: const Text('Add Payment'))
                       ],
                     )),
                 ElevatedButton(
