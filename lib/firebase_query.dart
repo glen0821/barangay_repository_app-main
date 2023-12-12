@@ -302,15 +302,15 @@ class FirebaseQuery {
       String weight,
       String height,
       String amount,
-      Map<String, dynamic> paypalResult,
+      String transactionID,
       ) async {
-    FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
-    bool returnFlag = false;
-    DateTime currentTime = DateTime.now();
-    int epochTime = currentTime.millisecondsSinceEpoch;
-    final docRef = firestoreDB.collection("votersList").doc(userId);
+      FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
+      bool returnFlag = false;
+      DateTime currentTime = DateTime.now();
+      int epochTime = currentTime.millisecondsSinceEpoch;
+      final docRef = firestoreDB.collection("votersList").doc(userId);
 
-    docRef.get().then(
+      docRef.get().then(
           (DocumentSnapshot doc) {
         final data = doc.data() as Map<String, dynamic>;
         final certificateDetails = <String, dynamic>{
@@ -327,7 +327,7 @@ class FirebaseQuery {
           "weight": weight,
           "height": height,
           "amountPaid": amount,
-          "transactionId": paypalResult['response']['id'],
+          "transactionId": transactionID,
           "transactionDate": currentTime.toUtc().toString(),
           "createdAt": DateFormat("MMMM d, yyy 'at h:mm:ss a UTC+8").format(
             DateTime(
@@ -352,6 +352,8 @@ class FirebaseQuery {
 
     return returnFlag;
   }
+
+
 
   Future<void> logout(FirebaseAuth auth, Function(void) thenPress) async {
     try {
