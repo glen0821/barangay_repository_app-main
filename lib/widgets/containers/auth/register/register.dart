@@ -20,7 +20,10 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  TextEditingController fullNameController = TextEditingController();
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController middleNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController suffixNameController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   TextEditingController precintNumberController = TextEditingController();
   TextEditingController lengthOfStayController = TextEditingController();
@@ -39,7 +42,10 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void dispose() {
     super.dispose();
-    fullNameController.dispose();
+    firstNameController.dispose();
+    middleNameController.dispose();
+    lastNameController.dispose();
+    suffixNameController.dispose();
     addressController.dispose();
     precintNumberController.dispose();
     lengthOfStayController.dispose();
@@ -71,9 +77,53 @@ class _RegisterPageState extends State<RegisterPage> {
                 SizedBox(
                   height: 16,
                 ),
-                CoreTextfield(
-                  labelText: 'Full Name',
-                  controller: fullNameController,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 220,
+                      child: CoreTextfield(
+                        labelText: 'First Name',
+                        controller: firstNameController,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 16,
+                    ),
+                    SizedBox(
+                      width: 70,
+                      child: CoreTextfield(
+                        labelText: 'M.I.',
+                        controller: middleNameController,
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 220,
+                      child: CoreTextfield(
+                        labelText: 'Last Name',
+                        controller: lastNameController,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 16,
+                    ),
+                    SizedBox(
+                      width: 70,
+                      child: CoreTextfield(
+                        fontSize: 15,
+                        labelText: 'Suffix',
+                        controller: suffixNameController,
+                      ),
+                    )
+                  ],
                 ),
                 SizedBox(
                   height: 16,
@@ -129,7 +179,12 @@ class _RegisterPageState extends State<RegisterPage> {
                         RegisterFunctions registerFunctions = RegisterFunctions(
                           emailController.text,
                           passwordController.text,
-                          fullNameController.text,
+                          RegisterFunctions.nameConcat(
+                            firstNameController.text, 
+                            middleNameController.text,
+                            lastNameController.text,
+                            suffixNameController.text
+                          ),
                           firebaseQuery,
                           context,
                         );
@@ -147,7 +202,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                     precintNumberController.text,
                                     lengthOfStayController.text,
                                     addressController.text,
-                                    fullNameController.text,
+                                    RegisterFunctions.nameConcat(
+                                      firstNameController.text, 
+                                      middleNameController.text,
+                                      lastNameController.text,
+                                      suffixNameController.text
+                                    ),
                                     firebaseAuth.currentUser?.uid)
                                 .then((credentialValue) {
                               if (credentialValue) {
