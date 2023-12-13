@@ -30,6 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController ageController = TextEditingController();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   FirebaseQuery firebaseQuery = FirebaseQuery();
   bool isLoading = false;
@@ -52,6 +53,7 @@ class _RegisterPageState extends State<RegisterPage> {
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
+    ageController.dispose();
   }
 
   @override
@@ -128,9 +130,28 @@ class _RegisterPageState extends State<RegisterPage> {
                 SizedBox(
                   height: 16,
                 ),
-                CoreTextfield(
-                  labelText: 'Email',
-                  controller: emailController,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 220,
+                      child: CoreTextfield(
+                        labelText: 'Email',
+                        controller: emailController,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 16,
+                    ),
+                    SizedBox(
+                      width: 70,
+                      child: CoreTextfield(
+                        fontSize: 15,
+                        labelText: 'Age',
+                        controller: ageController,
+                      ),
+                    )
+                  ],
                 ),
                 SizedBox(
                   height: 16,
@@ -187,6 +208,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           firebaseQuery,
                           context,
+                          ageController.text
                         );
 
                         registerFunctions.registerAcount().then((value) {
@@ -208,7 +230,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                       lastNameController.text,
                                       suffixNameController.text
                                     ),
-                                    firebaseAuth.currentUser?.uid)
+                                    firebaseAuth.currentUser?.uid, 
+                                    ageController.text)
                                 .then((credentialValue) {
                               if (credentialValue) {
                                 setState(() {
