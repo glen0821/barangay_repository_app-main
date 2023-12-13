@@ -27,7 +27,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _lengthOfStayController = TextEditingController();
   final TextEditingController _precintNumberController =
       TextEditingController();
-  final TextEditingController _ageController = TextEditingController();
   // TextEditingController _bioController = TextEditingController();
   bool _isEditMode = false;
   bool? _isFingerprintOn = false;
@@ -39,7 +38,6 @@ class _ProfilePageState extends State<ProfilePage> {
     _addressController.dispose();
     _lengthOfStayController.dispose();
     _precintNumberController.dispose();
-    _ageController.dispose();
     // _bioController.dispose();
     super.dispose();
   }
@@ -58,7 +56,6 @@ class _ProfilePageState extends State<ProfilePage> {
           _addressController.text = value['completeAddress'];
           _lengthOfStayController.text = value['lengthOfStay'];
           _precintNumberController.text = value['precintNumber'];
-          _ageController.text = value['age'];
         });
       },
     );
@@ -114,7 +111,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                   _lengthOfStayController.text;
                               String precintNumber =
                                   _precintNumberController.text;
-                              String age = _ageController.text;
                               if (name != '' ||
                                   email != '' ||
                                   address != '' ||
@@ -125,7 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 });
 
                                 firebaseQuery.updateProfile(name, lengthOfStay,
-                                    precintNumber, address, age, _auth.currentUser);
+                                    precintNumber, address, _auth.currentUser);
                               } else {
                                 Alert(
                                     context: context,
@@ -236,7 +232,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                       _lengthOfStayController.text;
                                   String precintNumber =
                                       _precintNumberController.text;
-                                  String age = _ageController.text;
                                   if (name != '' ||
                                       email != '' ||
                                       address != '' ||
@@ -251,7 +246,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                         lengthOfStay,
                                         precintNumber,
                                         address,
-                                        age,
                                         _auth.currentUser);
                                   } else {
                                     Alert(

@@ -24,7 +24,6 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController middleNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController suffixNameController = TextEditingController();
-  TextEditingController ageController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   TextEditingController precintNumberController = TextEditingController();
   TextEditingController lengthOfStayController = TextEditingController();
@@ -47,7 +46,6 @@ class _RegisterPageState extends State<RegisterPage> {
     middleNameController.dispose();
     lastNameController.dispose();
     suffixNameController.dispose();
-    ageController.dispose();
     addressController.dispose();
     precintNumberController.dispose();
     lengthOfStayController.dispose();
@@ -130,27 +128,9 @@ class _RegisterPageState extends State<RegisterPage> {
                 SizedBox(
                   height: 16,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 220,
-                      child: CoreTextfield(
-                        labelText: 'Email',
-                        controller: emailController,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 16,
-                    ),
-                    SizedBox(
-                      width: 70,
-                      child: CoreTextfield(
-                        labelText: 'Age',
-                        controller: ageController,
-                      ),
-                    )
-                  ],
+                CoreTextfield(
+                  labelText: 'Email',
+                  controller: emailController,
                 ),
                 SizedBox(
                   height: 16,
@@ -228,7 +208,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                       lastNameController.text,
                                       suffixNameController.text
                                     ),
-                                    ageController.text,
                                     firebaseAuth.currentUser?.uid)
                                 .then((credentialValue) {
                               if (credentialValue) {
