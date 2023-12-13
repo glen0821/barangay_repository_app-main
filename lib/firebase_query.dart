@@ -106,10 +106,10 @@ class FirebaseQuery {
   }
 
   Future<void> updateProfile(String name, String lengthOfStay,
-      String precintNumber, String address, User? user) async {
+      String precintNumber, String address, String age, User? user) async {
     await user?.updateDisplayName(name);
     await updateUserOtherCredentials(
-        name, lengthOfStay, precintNumber, address, user!.uid.toString());
+        name, lengthOfStay, precintNumber, address, age, user!.uid.toString());
   }
 
   //---------------------------- FIRESTORE QUERIES ------------------------------------//
@@ -127,6 +127,7 @@ class FirebaseQuery {
     String length_of_stay,
     String address,
     String fullName,
+    String age,
     String? docId,
   ) async {
     FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
@@ -135,6 +136,7 @@ class FirebaseQuery {
     // int epochTime = currentTime.millisecondsSinceEpoch;
     final credentials = <String, dynamic>{
       "completeName": fullName,
+      "age": age,
       "precintNumber": precint_number,
       "lengthOfStay": length_of_stay,
       "completeAddress": address,
@@ -150,13 +152,14 @@ class FirebaseQuery {
   }
 
   Future<void> updateUserOtherCredentials(String name, String lengthOfStay,
-      String precintNumber, String address, String documentId) async {
+      String precintNumber, String address, String documentId, String age) async {
     FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
     DateTime currentTime = DateTime.now();
 
     final users = <String, dynamic>{
       "completeAddress": address,
       "completeName": name,
+      "age": age,
       "lengthOfStay": lengthOfStay,
       "precintNumber": precintNumber,
       "updatedAt": currentTime
@@ -275,6 +278,7 @@ class FirebaseQuery {
         final data = doc.data() as Map<String, dynamic>;
         final certificateDetails = <String, dynamic>{
           "completeName": data['completeName'],
+          "age": data['age'],
           "lengthOfStay": data['lengthOfStay'],
           "dateOfAppointment": DateFormat('yyy-M-d').format(DateTime(appointmentDate.year, appointmentDate.month, appointmentDate.day)),
           "appointmentOwner": userId,

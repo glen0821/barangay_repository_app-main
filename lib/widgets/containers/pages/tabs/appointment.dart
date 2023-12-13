@@ -293,78 +293,78 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                           child: const Text('OK'))
                                     ]).show()
                               });
-                    } else {
-                      Map<String, dynamic>? result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => UsePaypal(
-                            sandboxMode: true,
-                            clientId: "AeGPFVZ_bq0ezU447uNzfTMFEpjkDXELBaL3FwqcC9hiv5nQXLE2_mPa6tZJIbPpIroVipb6i127CEh4",
-                            secretKey: "EGyYCvCySIuhVPzeWOr4lW88tjG-5pB19AbPBDmKem7jAWfAdNrUUF6q6nLtDGP5pivM1zUkfwH41oE1",
-                            returnURL: "https://samplesite.com/return",
-                            cancelURL: "https://samplesite.com/cancel",
-                              transactions: const [
-                                {
-                                  "amount": {
-                                    "total": '5.00',
-                                    "currency": "PHP",
-                                    "details": {
-                                      "subtotal": '5.00',
-                                    }
-                                  },
-                                  "description":
-                                  "Your ID order description.",
-                                  "item_list": {
-                                    "items": [
-                                      {
-                                        "name": "ID CARD",
-                                        "quantity": 1,
-                                        "price": '5.00',
-                                        "currency": "PHP"
-                                      }
-                                    ],
-                                  }
-                                }
-                              ],
-                              note: "Contact us for any questions on your order.",
-                              onSuccess: (Map<String, dynamic> paypalResult) async {
-                              print("onSuccess: $paypalResult");
+                    } //else {
+                    //   Map<String, dynamic>? result = await Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (BuildContext context) => UsePaypal(
+                    //         sandboxMode: true,
+                    //         clientId: "AeGPFVZ_bq0ezU447uNzfTMFEpjkDXELBaL3FwqcC9hiv5nQXLE2_mPa6tZJIbPpIroVipb6i127CEh4",
+                    //         secretKey: "EGyYCvCySIuhVPzeWOr4lW88tjG-5pB19AbPBDmKem7jAWfAdNrUUF6q6nLtDGP5pivM1zUkfwH41oE1",
+                    //         returnURL: "https://samplesite.com/return",
+                    //         cancelURL: "https://samplesite.com/cancel",
+                    //           transactions: const [
+                    //             {
+                    //               "amount": {
+                    //                 "total": '5.00',
+                    //                 "currency": "PHP",
+                    //                 "details": {
+                    //                   "subtotal": '5.00',
+                    //                 }
+                    //               },
+                    //               "description":
+                    //               "Your ID order description.",
+                    //               "item_list": {
+                    //                 "items": [
+                    //                   {
+                    //                     "name": "ID CARD",
+                    //                     "quantity": 1,
+                    //                     "price": '5.00',
+                    //                     "currency": "PHP"
+                    //                   }
+                    //                 ],
+                    //               }
+                    //             }
+                    //           ],
+                    //           note: "Contact us for any questions on your order.",
+                    //           onSuccess: (Map<String, dynamic> paypalResult) async {
+                    //           print("onSuccess: $paypalResult");
 
-                              await firebaseQuery.setBrgID(
-                                _auth.currentUser!.uid,
-                                _startDate,
-                                selectedGender,
-                                _age.text,
-                                _weight.text,
-                                _height.text,
-                                '5.00',
-                                paypalResult['response']['id'],
-                              );
-                              Alert(
-                                context: context,
-                                type: AlertType.success,
-                                desc: "Appointment success",
-                                closeFunction: null,
-                                buttons: [
-                                  DialogButton(
-                                    onPressed: (() {
-                                      Navigator.pop(context);
-                                    }),
-                                    child: const Text('OK'),
-                                  )
-                                ],
-                              ).show();
-                            },
-                            onError: (error) {
-                                print("onError: $error");
-                              },
-                              onCancel: (params) {
-                               print('cancelled: $params');
-                            }
-                          ),
-                        ),
-                      );
-                    }
+                    //           await firebaseQuery.setBrgID(
+                    //             _auth.currentUser!.uid,
+                    //             _startDate,
+                    //             selectedGender,
+                    //             _age.text,
+                    //             _weight.text,
+                    //             _height.text,
+                    //             '5.00',
+                    //             paypalResult['response']['id'],
+                    //           );
+                    //           Alert(
+                    //             context: context,
+                    //             type: AlertType.success,
+                    //             desc: "Appointment success",
+                    //             closeFunction: null,
+                    //             buttons: [
+                    //               DialogButton(
+                    //                 onPressed: (() {
+                    //                   Navigator.pop(context);
+                    //                 }),
+                    //                 child: const Text('OK'),
+                    //               )
+                    //             ],
+                    //           ).show();
+                    //         },
+                    //         onError: (error) {
+                    //             print("onError: $error");
+                    //           },
+                    //           onCancel: (params) {
+                    //            print('cancelled: $params');
+                    //         }
+                    //       ),
+                    //     ),
+                    //   );
+                    // }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryColor,
