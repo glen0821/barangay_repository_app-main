@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_paypal/flutter_paypal.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:barangay_repository_app/constants/colors.dart';
-import 'package:flutter_paypal_checkout/flutter_paypal_checkout.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class AppointmentPage extends StatefulWidget {
   const AppointmentPage({super.key});
@@ -299,19 +297,19 @@ class _AppointmentPageState extends State<AppointmentPage> {
                       Map<String, dynamic>? result = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (BuildContext context) => PaypalCheckout(
-                            sandboxMode: false,
-                            clientId:  "AZxYyI4LNE-ZBt6A1GCScu_gXF-XoNbAZTjMj6EpH9SeNsf3TzH2rTdL7esMtmlYWtzJy6Ollbc8Rme0",
-                            secretKey: "EISZmF-_bpCXTKC6vEk9aE9b4ZXJb86Oyz1Mys7wc-Lbcz-9GKIRLzDZSguW4bWwQmeLLqpxcJJOVsuY",
-                              returnURL: "success.snippetcoder.com",
-                              cancelURL: "cancel.snippetcoder.com",
+                          builder: (BuildContext context) => UsePaypal(
+                            sandboxMode: true,
+                            clientId: "AeGPFVZ_bq0ezU447uNzfTMFEpjkDXELBaL3FwqcC9hiv5nQXLE2_mPa6tZJIbPpIroVipb6i127CEh4",
+                            secretKey: "EGyYCvCySIuhVPzeWOr4lW88tjG-5pB19AbPBDmKem7jAWfAdNrUUF6q6nLtDGP5pivM1zUkfwH41oE1",
+                            returnURL: "https://samplesite.com/return",
+                            cancelURL: "https://samplesite.com/cancel",
                               transactions: const [
                                 {
                                   "amount": {
-                                    "total": '0.01',
+                                    "total": '5.00',
                                     "currency": "PHP",
                                     "details": {
-                                      "subtotal": '0.01',
+                                      "subtotal": '5.00',
                                     }
                                   },
                                   "description":
@@ -321,7 +319,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                       {
                                         "name": "ID CARD",
                                         "quantity": 1,
-                                        "price": '0.01',
+                                        "price": '5.00',
                                         "currency": "PHP"
                                       }
                                     ],
@@ -329,21 +327,20 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                 }
                               ],
                               note: "Contact us for any questions on your order.",
-                              onSuccess: (Map params) async {
+                              onSuccess: (Map<String, dynamic> paypalResult) async {
+                              print("onSuccess: $paypalResult");
 
-                                 String transactionId = (params['data'] != null && params['data']['id'] != null) ? params['data']['id'] : '';
-
-                                  await firebaseQuery.setBrgID(
-                                    _auth.currentUser!.uid,
-                                    _startDate,
-                                    selectedGender,
-                                    _age.text,
-                                    _weight.text,
-                                    _height.text,
-                                     '0.01',
-                                    transactionId
-                                  );
-                               Alert(
+                              await firebaseQuery.setBrgID(
+                                _auth.currentUser!.uid,
+                                _startDate,
+                                selectedGender,
+                                _age.text,
+                                _weight.text,
+                                _height.text,
+                                '5.00',
+                                paypalResult['response']['id'],
+                              );
+                              Alert(
                                 context: context,
                                 type: AlertType.success,
                                 desc: "Appointment success",
@@ -360,9 +357,9 @@ class _AppointmentPageState extends State<AppointmentPage> {
                             },
                             onError: (error) {
                                 print("onError: $error");
-                             },
-                             onCancel: () {
-                                print('cancelled:');
+                              },
+                              onCancel: (params) {
+                               print('cancelled: $params');
                             }
                           ),
                         ),
