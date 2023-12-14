@@ -35,8 +35,11 @@ class _RegisterPageState extends State<RegisterPage> {
   FirebaseQuery firebaseQuery = FirebaseQuery();
   bool isLoading = false;
   bool _passVisible = false;
+
+  // No color = 0, Red = 1, Orange = 2, Green = 3
   int _passStatus = 0;
   int _confirmPassStatus = 0;
+
   @override
   void initState() {
     super.initState();
@@ -238,7 +241,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             } else if (text != passwordController.text) {
                               _confirmPassStatus = 1;
                             } else {
-                              _confirmPassStatus = 2;
+                              _confirmPassStatus = 3;
                             }
                           });
                         },
@@ -248,7 +251,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
-                          color: RegisterFunctions.passConfirmColor(_confirmPassStatus)
+                          color: RegisterFunctions.passColor(_confirmPassStatus)
                         ),
                         height: 4,
                       )

@@ -123,13 +123,4 @@ class RegisterFunctions {
     }
     return Colors.white;
   }
-  static Color passConfirmColor(int passStatus) {
-    switch (passStatus) {
-      case 1:
-        return Colors.red;
-      case 2:
-        return Colors.green;
-    }
-    return Colors.white;
-  }
 }
