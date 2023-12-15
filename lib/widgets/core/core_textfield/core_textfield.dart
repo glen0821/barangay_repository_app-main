@@ -44,7 +44,7 @@ class _CoreTextfieldState extends State<CoreTextfield> {
   Widget build(BuildContext context) {
     ResponsiveSizing responsiveSizing = new ResponsiveSizing(context);
     return SizedBox(
-        width: responsiveSizing.calc_width(311),
+        width: responsiveSizing.calc_width(365),// 311 original
         child: TextField(
           obscureText: widget.obscureText!,
           maxLength: widget.maxLength ?? 32,

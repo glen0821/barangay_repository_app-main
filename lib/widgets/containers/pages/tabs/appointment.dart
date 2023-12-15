@@ -1,9 +1,14 @@
+import 'dart:io';
 import 'package:barangay_repository_app/firebase_query.dart';
+import 'package:barangay_repository_app/widgets/containers/dialog/dialogs.dart';
 import 'package:barangay_repository_app/widgets/core/core_dropdown/core_dropdown.dart';
+import 'package:barangay_repository_app/widgets/core/core_id_holder/core_id_holder.dart';
 import 'package:barangay_repository_app/widgets/core/core_textfield/core_textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paypal/flutter_paypal.dart';
+import 'package:flutter_paypal_checkout/flutter_paypal_checkout.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:barangay_repository_app/constants/colors.dart';
 
@@ -36,6 +41,8 @@ class _AppointmentPageState extends State<AppointmentPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   String selectedGender = 'Male';
+
+  File? _IdImageFile;
 
   FirebaseQuery firebaseQuery = FirebaseQuery();
 
@@ -130,7 +137,31 @@ class _AppointmentPageState extends State<AppointmentPage> {
                   'Book a Appointment',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 16),
+                Visibility(
+                    visible: selectedOption == 'Identification Card',
+                    child: Column(
+                      children: [
+                        SizedBox(height: 10),
+                        CoreIdHolder(
+                          onIdImageChanged: (File? IdImageFile) {
+                            if (IdImageFile != null) {
+                              setState(() {
+                                _IdImageFile = IdImageFile;
+                              });
+                            } else {
+                              print('Walang file na upload');
+                            }
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        const Text(
+                          'Upload your ID picture (2x2)',
+                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                const SizedBox(height:16),
                 CoreDropdown(
                   labelText: 'Select an option',
                   options: dropdownOptions,
@@ -145,7 +176,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                 //     border: OutlineInputBorder(),
                 //   ),
                 // ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
                 Visibility(
                     visible: selectedOption == 'Clearance' ||
                             selectedOption == 'Certificate'
@@ -294,84 +325,85 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                     ]).show()
                               });
                     } else {
-                      Map<String, dynamic>? result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => UsePaypal(
-                            sandboxMode: true,
-                            clientId: "AeGPFVZ_bq0ezU447uNzfTMFEpjkDXELBaL3FwqcC9hiv5nQXLE2_mPa6tZJIbPpIroVipb6i127CEh4",
-                            secretKey: "EGyYCvCySIuhVPzeWOr4lW88tjG-5pB19AbPBDmKem7jAWfAdNrUUF6q6nLtDGP5pivM1zUkfwH41oE1",
-                            returnURL: "https://samplesite.com/return",
-                            cancelURL: "https://samplesite.com/cancel",
-                              transactions: const [
-                                {
-                                  "amount": {
-                                    "total": '5.00',
-                                    "currency": "PHP",
-                                    "details": {
-                                      "subtotal": '5.00',
-                                    }
-                                  },
-                                  "description":
-                                  "Your ID order description.",
-                                  "item_list": {
-                                    "items": [
+                      bool shouldProceed = await showConfirmationDialog(context);
+
+                      if (shouldProceed) {
+                        BuildContext dialogContext = context;
+                        Map<String, dynamic>? result = await Navigator.push(dialogContext,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                PaypalCheckout(
+                                  // sandboxMode: true,
+                                    clientId: "AZxYyI4LNE-ZBt6A1GCScu_gXF-XoNbAZTjMj6EpH9SeNsf3TzH2rTdL7esMtmlYWtzJy6Ollbc8Rme0",
+                                    secretKey: "EISZmF-_bpCXTKC6vEk9aE9b4ZXJb86Oyz1Mys7wc-Lbcz-9GKIRLzDZSguW4bWwQmeLLqpxcJJOVsuY",
+                                    returnURL: "success.snippetcoder.com", //Pwede to palitan base sa reference nyo
+                                    cancelURL: "cancel.snippetcoder.com", //Pwede to palitan base sa reference nyo
+                                    transactions: const [
                                       {
-                                        "name": "ID CARD",
-                                        "quantity": 1,
-                                        "price": '5.00',
-                                        "currency": "PHP"
+                                        "amount": {
+                                          "total": '100.00',
+                                          "currency": "PHP",
+                                          "details": {
+                                            "subtotal": '100.00',
+                                          }
+                                        },
+                                        "description":
+                                        "Your Barangay ID order description.",
+                                        "item_list": {
+                                          "items": [
+                                            {
+                                              "name": "Barangay ID",
+                                              "quantity": 1,
+                                              "price": '100.00',
+                                              "currency": "PHP"
+                                            }
+                                          ],
+                                        }
                                       }
                                     ],
-                                  }
-                                }
-                              ],
-                              note: "Contact us for any questions on your order.",
-                              onSuccess: (Map<String, dynamic> paypalResult) async {
-                              print("onSuccess: $paypalResult");
+                                    note: "Contact us for any questions on your order.",
+                                    onSuccess: (Map params) async {
+                                      // print("onSuccess: $params"); Uncomment if want nyo maprint ang whole transaction details:>
 
-                              await firebaseQuery.setBrgID(
-                                _auth.currentUser!.uid,
-                                _startDate,
-                                selectedGender,
-                                _age.text,
-                                _weight.text,
-                                _height.text,
-                                '5.00',
-                                paypalResult['response']['id'],
-                              );
-                              Alert(
-                                context: context,
-                                type: AlertType.success,
-                                desc: "Appointment success",
-                                closeFunction: null,
-                                buttons: [
-                                  DialogButton(
-                                    onPressed: (() {
-                                      Navigator.pop(context);
-                                    }),
-                                    child: const Text('OK'),
-                                  )
-                                ],
-                              ).show();
-                            },
-                            onError: (error) {
-                                print("onError: $error");
-                              },
-                              onCancel: (params) {
-                               print('cancelled: $params');
-                            }
-                          ),
-                        ),
-                      );
-                    }
-                  },
+                                      String transactionId = (params['data'] != null && params['data']['id'] != null) ? params['data']['id'] : '';
+
+                                      await firebaseQuery.setBrgID(
+                                        _auth.currentUser!.uid,
+                                        _startDate,
+                                        selectedGender,
+                                        _age.text,
+                                        _weight.text,
+                                        _height.text,
+                                        '100.00',
+                                        transactionId,
+                                        _IdImageFile,
+                                      );
+                                      showTransactionReceipt(context, transactionId);
+                                      selectedGender = 'Male';
+                                      _age.clear();
+                                      _weight.clear();
+                                      _height.clear();
+                                    },
+                                    onError: (error) {
+                                      print("onError: $error");
+                                    },
+                                    onCancel: () {
+                                      print('Transaction cancelled');
+                                    }
+                                ),
+                              ),
+                            ); // **Warning lang yan**
+                          }
+                      }
+                    },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryColor,
                   ),
-                  child: const Text(
-                    'Proceed to payment',
-                    style: TextStyle(
+                  child: Text(
+                    selectedOption == 'Identification Card'
+                        ? 'Proceed to Payment'
+                        : 'Make Appointment',
+                    style: const TextStyle(
                       color: Colors.white,
                     ),
                   ),

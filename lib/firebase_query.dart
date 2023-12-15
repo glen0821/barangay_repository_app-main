@@ -4,9 +4,11 @@ import 'package:barangay_repository_app/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'dart:io';
 
 class FirebaseQuery {
   // FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
@@ -302,17 +304,25 @@ class FirebaseQuery {
       String weight,
       String height,
       String amount,
-      Map<String, dynamic> paypalResult,
+      String transactionID,
+      File? profileImageFile,
       ) async {
-    FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
-    bool returnFlag = false;
-    DateTime currentTime = DateTime.now();
-    int epochTime = currentTime.millisecondsSinceEpoch;
-    final docRef = firestoreDB.collection("votersList").doc(userId);
+      FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
+      bool returnFlag = false;
+      DateTime currentTime = DateTime.now();
+      int epochTime = currentTime.millisecondsSinceEpoch;
+      final docRef = firestoreDB.collection("votersList").doc(userId);
 
-    docRef.get().then(
-          (DocumentSnapshot doc) {
+      docRef.get().then(
+        (DocumentSnapshot doc) async {
         final data = doc.data() as Map<String, dynamic>;
+        if (profileImageFile != null) {
+          final storageRef = FirebaseStorage.instance.ref().child('id_images/$userId.png');
+          await storageRef.putFile(profileImageFile);
+          final IDpictureUrl = await storageRef.getDownloadURL();
+
+          data['IDpictureUrl'] = IDpictureUrl;
+        }
         final certificateDetails = <String, dynamic>{
           "completeName": data['completeName'],
           "address": data['completeAddress'],
@@ -322,12 +332,13 @@ class FirebaseQuery {
             DateTime(appointmentDate.year, appointmentDate.month, appointmentDate.day),
           ),
           "appointmentOwner": userId,
+          "IDpictureUrl": data['IDpictureUrl'],
           "gender": sex,
           "age": age,
           "weight": weight,
           "height": height,
           "amountPaid": amount,
-          "transactionId": paypalResult['response']['id'],
+          "transactionId": transactionID,
           "transactionDate": currentTime.toUtc().toString(),
           "createdAt": DateFormat("MMMM d, yyy 'at h:mm:ss a UTC+8").format(
             DateTime(

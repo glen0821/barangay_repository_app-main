@@ -43,7 +43,11 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  flutter_paypal_checkout: ^1.0.1
   flutter_paypal: 0.2.0
+  image_picker: ^1.0.2
+  firebase_storage: ^11.2.6
+
 
   # Firebase dependencies
   firebase_core: ^2.13.0
@@ -73,7 +77,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/
+    - assets/paypal.png
+    - assets/sn3.png
+    - assets/avatar.png
     
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

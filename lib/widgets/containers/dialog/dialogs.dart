@@ -1,0 +1,232 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+void showTransactionReceipt(BuildContext context, String transactionId,) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: EdgeInsets.all(15),
+        title: Column(
+          children: [
+            Center(
+              child: Image.asset(
+                  'assets/paypal.png',
+                  width: 200,
+              ),
+            ),
+            SizedBox(height: 10),
+            const Text(
+              'Transaction Receipt',
+              style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        content: Container(
+          height: 360,
+          width: 600,
+          child: SingleChildScrollView(
+            child: Column(
+              children: List.generate(5, (index) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 5),
+                      leading: Text(
+                        label(index),
+                        style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                      trailing: Text(
+                        Value(index, transactionId),
+                        style: const TextStyle(color: Colors.black, fontSize: 14),
+                      ),
+                    ),
+                    Divider(),
+                  ],
+                );
+              }),
+            ),
+          ),
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                'Powered by: ',
+                style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(width: 10),
+              Image.asset(
+                'assets/paypal.png',
+                width: 60,
+                height: 60,
+              ),
+              SizedBox(width: 10),
+
+            ],
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              transactionId = '';
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF253B80)),
+              minimumSize: MaterialStateProperty.all(Size(double.infinity, 40)),
+            ),
+            child: const Text(
+              'CONFIRM',
+              style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+
+      );
+    },
+  );
+}
+
+String label(int index) {
+  switch (index) {
+    case 0:
+      return 'Transaction ID:\n\n\n';
+    case 1:
+      return 'Transaction Date';
+    case 2:
+      return 'Amount Paid';
+    case 3:
+      return 'Item';
+    case 4:
+      return 'Quantity';
+    default:
+      return '';
+  }
+}
+
+String Value(int index, String transactionId) {
+  switch (index) {
+    case 0:
+      return transactionId ?? '';
+    case 1:
+      return dateToday();
+    case 2:
+      return '₱100.00';
+    case 3:
+      return 'Barangay ID Card';
+    case 4:
+      return '1 pcs.';
+    default:
+      return '';
+  }
+}
+
+String dateToday() {
+  DateTime now = DateTime.now();
+  String formattedDate = '${now.month.toString().padLeft(2, '0')}/'
+      '${now.day.toString().padLeft(2, '0')}/'
+      '${now.year}';
+  return formattedDate;
+}
+
+Future<bool> showConfirmationDialog(BuildContext context) async {
+  bool shouldProceed = false;
+
+  await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: EdgeInsets.all(15),
+        title: Column(
+          children: [
+            Center(
+              child: Image.asset(
+                'assets/paypal.png',
+                width: 200,
+              ),
+            ),
+            SizedBox(height: 10),
+            const Text(
+              'Confirmation',
+              style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        content: Container(
+          width: 600,
+          height: 200,
+          child: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Before proceeding make sure that:',
+                  style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 20),
+                Text(
+                  '‣ You have a PayPal account',
+                  style: TextStyle(color: Colors.black, fontSize: 14),
+                  textAlign: TextAlign.left,
+                ),
+                SizedBox(height: 10),
+                Text(
+                  '‣ You have a ₱100.00 balance in your PayPal account',
+                  style: TextStyle(color: Colors.black, fontSize: 14),
+                  textAlign: TextAlign.left,
+                ),
+                SizedBox(height: 10),
+                Text(
+                  '‣ The item you will be paying is for Barangay ID',
+                  style: TextStyle(color: Colors.black, fontSize: 14),
+                  textAlign: TextAlign.left,
+                ),
+              ],
+            ),
+          )
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+              minimumSize: MaterialStateProperty.all(Size(double.infinity, 40)),
+            ),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              shouldProceed = true;
+              Navigator.of(context).pop();
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF253B80)),
+              minimumSize: MaterialStateProperty.all(Size(double.infinity, 40)),
+            ),
+            child: const Text(
+              'Proceed',
+              style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      );
+    },
+  );
+
+  return shouldProceed;
+}
