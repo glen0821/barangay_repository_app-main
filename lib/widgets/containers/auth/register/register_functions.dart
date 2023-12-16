@@ -112,14 +112,14 @@ class RegisterFunctions {
   ) {
     return "$firstName $middleName $lastName $suffixName";
   }
-  static Color passColor(int passStatus) {
+  static Color passColor(int passStatus, int passStrength) {
     switch (passStatus) {
       case 1:
         return Colors.red;
       case 2:
         return Colors.orange;
       case 3:
-        return Colors.green;
+        return passStrength > 1 ? Colors.green : Colors.red;
     }
     return Colors.white;
   }

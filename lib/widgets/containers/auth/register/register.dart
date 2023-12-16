@@ -69,275 +69,279 @@ class _RegisterPageState extends State<RegisterPage> {
           padding: EdgeInsets.all(16.0),
           child: Center(
             child: SingleChildScrollView(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                isLoading
-                    ? Center(
-                        child:
-                            CircularProgressIndicator(), // Add CircularProgressIndicator widget here
-                      )
-                    : Container(),
-                Text(
-                  'Register your account here',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 220,
-                      child: CoreTextfield(
-                        labelText: 'First Name',
-                        controller: firstNameController,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 16,
-                    ),
-                    SizedBox(
-                      width: 70,
-                      child: CoreTextfield(
-                        labelText: 'M.I.',
-                        controller: middleNameController,
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 220,
-                      child: CoreTextfield(
-                        labelText: 'Last Name',
-                        controller: lastNameController,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 16,
-                    ),
-                    SizedBox(
-                      width: 70,
-                      child: CoreTextfield(
-                        fontSize: 15,
-                        labelText: 'Suffix',
-                        controller: suffixNameController,
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 220,
-                      child: CoreTextfield(
-                        labelText: 'Email',
-                        controller: emailController,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 16,
-                    ),
-                    SizedBox(
-                      width: 70,
-                      child: CoreTextfield(
-                        fontSize: 15,
-                        labelText: 'Age',
-                        controller: ageController,
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                CoreTextfield(
-                  labelText: 'Address',
-                  controller: addressController,
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                CoreTextfield(
-                  labelText: 'Precint Number',
-                  controller: precintNumberController,
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                CoreTextfield(
-                  labelText: 'Length of stay in San Nicolas',
-                  controller: lengthOfStayController,
-                ),
-                SizedBox(height: 16.0),
-                Padding(
+                child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 27),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextField(
-                        obscureText: !_passVisible,
-                        decoration: InputDecoration(
-                          hintText: 'Password',
-                          border: OutlineInputBorder(),
-                          suffixIcon: IconButton(
-                            icon: Icon(_passVisible ? Icons.visibility : Icons.visibility_off),
-                            onPressed: () => {
-                              setState(() {_passVisible = !_passVisible;})
-                            },
-                          )
-                        ),
-                        onChanged: (String text) {
-                          setState(() {
-                            if (text.isEmpty) {
-                              _passStatus = 0;
-                            } else if (text.length <= 6) {
-                              _passStatus = 1;
-                            } else if (text.length < 12) {
-                              _passStatus = 2;
-                            } else {
-                              _passStatus = 3;
-                            }
-                          });
-                        },
-                        controller: passwordController,
+                      isLoading
+                          ? Center(
+                              child:
+                                  CircularProgressIndicator(), // Add CircularProgressIndicator widget here
+                            )
+                          : Container(),
+                      Text(
+                        'Register your account here',
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: RegisterFunctions.passColor(_passStatus)
-                        ),
-                        height: 4,
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 27),
-                  child: Column(
-                    children: [
-                      TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Confirm Password',
-                          border: OutlineInputBorder()
-                        ),
-                        onChanged: (String text) {
-                          setState(() {
-                            if (text.isEmpty) {
-                              _confirmPassStatus = 0;
-                            } else if (text != passwordController.text) {
-                              _confirmPassStatus = 1;
-                            } else {
-                              _confirmPassStatus = 3;
-                            }
-                          });
-                        },
-                        obscureText: true,
-                        controller: confirmPasswordController,
+                      SizedBox(
+                        height: 16,
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: RegisterFunctions.passColor(_confirmPassStatus)
-                        ),
-                        height: 4,
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(height: 12),
-                CoreButton(
-                    text: 'Register',
-                    onPressed: (() {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      if (passwordController.text != '' &&
-                          confirmPasswordController.text != '') {
-                        RegisterFunctions registerFunctions = RegisterFunctions(
-                          emailController.text,
-                          passwordController.text,
-                          RegisterFunctions.nameConcat(
-                            firstNameController.text, 
-                            middleNameController.text,
-                            lastNameController.text,
-                            suffixNameController.text
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 220,
+                            child: CoreTextfield(
+                              labelText: 'First Name',
+                              controller: firstNameController,
+                            ),
                           ),
-                          firebaseQuery,
-                          context,
-                          ageController.text
-                        );
-
-                        registerFunctions.registerAcount().then((value) {
-                          print('value: $value');
-
-                          if (value) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LoginPage()));
-                            firebaseQuery
-                                .setUserCredentials(
-                                    precintNumberController.text,
-                                    lengthOfStayController.text,
-                                    addressController.text,
-                                    RegisterFunctions.nameConcat(
-                                      firstNameController.text, 
-                                      middleNameController.text,
-                                      lastNameController.text,
-                                      suffixNameController.text
-                                    ),
-                                    firebaseAuth.currentUser?.uid, 
-                                    ageController.text)
-                                .then((credentialValue) {
-                              if (credentialValue) {
-                                setState(() {
-                                  isLoading = false;
-                                });
-                                firebaseAuth.signOut();
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => LoginPage()));
-                              }
+                          SizedBox(
+                            width: 16,
+                          ),
+                          SizedBox(
+                            width: 70,
+                            child: CoreTextfield(
+                              labelText: 'M.I.',
+                              controller: middleNameController,
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 220,
+                            child: CoreTextfield(
+                              labelText: 'Last Name',
+                              controller: lastNameController,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 16,
+                          ),
+                          SizedBox(
+                            width: 70,
+                            child: CoreTextfield(
+                              fontSize: 15,
+                              labelText: 'Suffix',
+                              controller: suffixNameController,
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 220,
+                            child: CoreTextfield(
+                              labelText: 'Email',
+                              controller: emailController,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 16,
+                          ),
+                          SizedBox(
+                            width: 70,
+                            child: CoreTextfield(
+                              fontSize: 15,
+                              labelText: 'Age',
+                              controller: ageController,
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      CoreTextfield(
+                        labelText: 'Address',
+                        controller: addressController,
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      CoreTextfield(
+                        labelText: 'Precint Number',
+                        controller: precintNumberController,
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      CoreTextfield(
+                        labelText: 'Length of stay in San Nicolas',
+                        controller: lengthOfStayController,
+                      ),
+                      SizedBox(height: 16.0),
+                      Column(
+                        children: [
+                          TextField(
+                            obscureText: !_passVisible,
+                            decoration: InputDecoration(
+                              hintText: 'Password',
+                              border: OutlineInputBorder(),
+                              suffixIcon: IconButton(
+                                icon: Icon(_passVisible ? Icons.visibility : Icons.visibility_off),
+                                onPressed: () => {
+                                  setState(() {_passVisible = !_passVisible;})
+                                },
+                              )
+                            ),
+                            onChanged: (String text) {
+                              setState(() {
+                                if (text.isEmpty) {
+                                  _passStatus = 0;
+                                } else if (text.length <= 6) {
+                                  _passStatus = 1;
+                                } else if (text.length < 12) {
+                                  _passStatus = 2;
+                                  if (confirmPasswordController.text.isEmpty) {
+                                    _confirmPassStatus = 0;
+                                  } else if (confirmPasswordController.text != text) {
+                                    _confirmPassStatus = 1;
+                                  } else {
+                                    _confirmPassStatus = 3;
+                                  }
+                                } else {
+                                  _passStatus = 3;
+                                }
+                              });
+                            },
+                            controller: passwordController,
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: RegisterFunctions.passColor(_passStatus, _passStatus)
+                            ),
+                            height: 4,
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      Column(
+                        children: [
+                          TextField(
+                            decoration: InputDecoration(
+                              hintText: 'Confirm Password',
+                              border: OutlineInputBorder()
+                            ),
+                            onChanged: (String text) {
+                              setState(() {
+                                if (text.isEmpty) {
+                                  _confirmPassStatus = 0;
+                                } else if (text != passwordController.text) {
+                                  _confirmPassStatus = 1;
+                                } else {
+                                  _confirmPassStatus = 3;
+                                }
+                              });
+                            },
+                            obscureText: true,
+                            controller: confirmPasswordController,
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: RegisterFunctions.passColor(_confirmPassStatus, _passStatus)
+                            ),
+                            height: 4,
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 12),
+                      CoreButton(
+                          text: 'Register',
+                          onPressed: (() {
+                            setState(() {
+                              isLoading = true;
                             });
-                          }
-                        });
-                      } else {
-                        Alert(
-                            context: context,
-                            type: AlertType.error,
-                            desc: "Password and Confirm Password not Matched.",
-                            closeFunction: null,
-                            closeIcon: null,
-                            buttons: [
-                              DialogButton(
-                                  onPressed: (() => Navigator.pop(context)),
-                                  child: const Text('OK'))
-                            ]).show();
-                      }
-                    })),
-                TextButton(
-                    onPressed: (() {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => LoginPage()));
-                    }),
-                    child: Text('Already have an account? Sign-In instead'))
-              ],
-            )),
+                            if (passwordController.text != '' &&
+                                confirmPasswordController.text != '') {
+                              RegisterFunctions registerFunctions = RegisterFunctions(
+                                emailController.text,
+                                passwordController.text,
+                                RegisterFunctions.nameConcat(
+                                  firstNameController.text, 
+                                  middleNameController.text,
+                                  lastNameController.text,
+                                  suffixNameController.text
+                                ),
+                                firebaseQuery,
+                                context,
+                                ageController.text
+                              );
+                      
+                              registerFunctions.registerAcount().then((value) {
+                                print('value: $value');
+                      
+                                if (value) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => LoginPage()));
+                                  firebaseQuery
+                                      .setUserCredentials(
+                                          precintNumberController.text,
+                                          lengthOfStayController.text,
+                                          addressController.text,
+                                          RegisterFunctions.nameConcat(
+                                            firstNameController.text, 
+                                            middleNameController.text,
+                                            lastNameController.text,
+                                            suffixNameController.text
+                                          ),
+                                          firebaseAuth.currentUser?.uid, 
+                                          ageController.text)
+                                      .then((credentialValue) {
+                                    if (credentialValue) {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      firebaseAuth.signOut();
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => LoginPage()));
+                                    }
+                                  });
+                                }
+                              });
+                            } else {
+                              Alert(
+                                  context: context,
+                                  type: AlertType.error,
+                                  desc: "Password and Confirm Password not Matched.",
+                                  closeFunction: null,
+                                  closeIcon: null,
+                                  buttons: [
+                                    DialogButton(
+                                        onPressed: (() => Navigator.pop(context)),
+                                        child: const Text('OK'))
+                                  ]).show();
+                            }
+                          })),
+                      TextButton(
+                          onPressed: (() {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => LoginPage()));
+                          }),
+                          child: Text('Already have an account? Sign-In instead'))
+                                    ],
+                  ),
+                )),
           )),
     );
   }
