@@ -30,9 +30,16 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController ageController = TextEditingController();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   FirebaseQuery firebaseQuery = FirebaseQuery();
   bool isLoading = false;
+  bool _passVisible = false;
+
+  // No color = 0, Red = 1, Orange = 2, Green = 3
+  int _passStatus = 0;
+  int _confirmPassStatus = 0;
+
   @override
   void initState() {
     super.initState();
@@ -52,6 +59,7 @@ class _RegisterPageState extends State<RegisterPage> {
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
+    ageController.dispose();
   }
 
   @override
@@ -128,9 +136,28 @@ class _RegisterPageState extends State<RegisterPage> {
                 SizedBox(
                   height: 16,
                 ),
-                CoreTextfield(
-                  labelText: 'Email',
-                  controller: emailController,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 220,
+                      child: CoreTextfield(
+                        labelText: 'Email',
+                        controller: emailController,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 16,
+                    ),
+                    SizedBox(
+                      width: 70,
+                      child: CoreTextfield(
+                        fontSize: 15,
+                        labelText: 'Age',
+                        controller: ageController,
+                      ),
+                    )
+                  ],
                 ),
                 SizedBox(
                   height: 16,
@@ -154,20 +181,84 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: lengthOfStayController,
                 ),
                 SizedBox(height: 16.0),
-                CoreTextfield(
-                  labelText: 'Password',
-                  obscureText: true,
-                  controller: passwordController,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 27),
+                  child: Column(
+                    children: [
+                      TextField(
+                        obscureText: !_passVisible,
+                        decoration: InputDecoration(
+                          hintText: 'Password',
+                          border: OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(_passVisible ? Icons.visibility : Icons.visibility_off),
+                            onPressed: () => {
+                              setState(() {_passVisible = !_passVisible;})
+                            },
+                          )
+                        ),
+                        onChanged: (String text) {
+                          setState(() {
+                            if (text.isEmpty) {
+                              _passStatus = 0;
+                            } else if (text.length <= 6) {
+                              _passStatus = 1;
+                            } else if (text.length < 12) {
+                              _passStatus = 2;
+                            } else {
+                              _passStatus = 3;
+                            }
+                          });
+                        },
+                        controller: passwordController,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: RegisterFunctions.passColor(_passStatus)
+                        ),
+                        height: 4,
+                      )
+                    ],
+                  ),
                 ),
                 SizedBox(
-                  height: 16,
+                  height: 12,
                 ),
-                CoreTextfield(
-                  labelText: 'Confirm Password',
-                  obscureText: true,
-                  controller: confirmPasswordController,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 27),
+                  child: Column(
+                    children: [
+                      TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Confirm Password',
+                          border: OutlineInputBorder()
+                        ),
+                        onChanged: (String text) {
+                          setState(() {
+                            if (text.isEmpty) {
+                              _confirmPassStatus = 0;
+                            } else if (text != passwordController.text) {
+                              _confirmPassStatus = 1;
+                            } else {
+                              _confirmPassStatus = 3;
+                            }
+                          });
+                        },
+                        obscureText: true,
+                        controller: confirmPasswordController,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: RegisterFunctions.passColor(_confirmPassStatus)
+                        ),
+                        height: 4,
+                      )
+                    ],
+                  ),
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 12),
                 CoreButton(
                     text: 'Register',
                     onPressed: (() {
@@ -187,6 +278,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           firebaseQuery,
                           context,
+                          ageController.text
                         );
 
                         registerFunctions.registerAcount().then((value) {
@@ -208,7 +300,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                       lastNameController.text,
                                       suffixNameController.text
                                     ),
-                                    firebaseAuth.currentUser?.uid)
+                                    firebaseAuth.currentUser?.uid, 
+                                    ageController.text)
                                 .then((credentialValue) {
                               if (credentialValue) {
                                 setState(() {

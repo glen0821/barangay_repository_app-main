@@ -11,14 +11,16 @@ class RegisterFunctions {
   FirebaseQuery? _firebaseQuery;
   BuildContext? _context;
   Widget? _navigator;
+  String? _age;
 
   RegisterFunctions(String email, String password, String fullName,
-      FirebaseQuery firebaseQuery, BuildContext context) {
+      FirebaseQuery firebaseQuery, BuildContext context, String age) {
     _email = email;
     _password = password;
     _fullName = fullName;
     _firebaseQuery = firebaseQuery;
     _context = context;
+    _age = age;
   }
   Future<bool> registerAcount() async {
     bool returnFlag = false;
@@ -109,5 +111,16 @@ class RegisterFunctions {
     String suffixName
   ) {
     return "$firstName $middleName $lastName $suffixName";
+  }
+  static Color passColor(int passStatus) {
+    switch (passStatus) {
+      case 1:
+        return Colors.red;
+      case 2:
+        return Colors.orange;
+      case 3:
+        return Colors.green;
+    }
+    return Colors.white;
   }
 }

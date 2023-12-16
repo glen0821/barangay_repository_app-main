@@ -108,10 +108,10 @@ class FirebaseQuery {
   }
 
   Future<void> updateProfile(String name, String lengthOfStay,
-      String precintNumber, String address, User? user) async {
+      String precintNumber, String address, User? user, String age) async {
     await user?.updateDisplayName(name);
     await updateUserOtherCredentials(
-        name, lengthOfStay, precintNumber, address, user!.uid.toString());
+        name, lengthOfStay, precintNumber, address, user!.uid.toString(), age);
   }
 
   //---------------------------- FIRESTORE QUERIES ------------------------------------//
@@ -130,6 +130,7 @@ class FirebaseQuery {
     String address,
     String fullName,
     String? docId,
+    String age
   ) async {
     FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
     bool returnFlag = false;
@@ -141,6 +142,7 @@ class FirebaseQuery {
       "lengthOfStay": length_of_stay,
       "completeAddress": address,
       "createdAt": currentTime,
+      "age": age
     };
     firestoreDB
         .collection("votersList")
@@ -152,7 +154,7 @@ class FirebaseQuery {
   }
 
   Future<void> updateUserOtherCredentials(String name, String lengthOfStay,
-      String precintNumber, String address, String documentId) async {
+      String precintNumber, String address, String documentId, String age) async {
     FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
     DateTime currentTime = DateTime.now();
 
@@ -161,7 +163,8 @@ class FirebaseQuery {
       "completeName": name,
       "lengthOfStay": lengthOfStay,
       "precintNumber": precintNumber,
-      "updatedAt": currentTime
+      "updatedAt": currentTime,
+      "age": age
     };
 
     final usersRef = firestoreDB.collection("votersList").doc(documentId);
@@ -283,6 +286,7 @@ class FirebaseQuery {
           "complaint": complaint,
           "address": data['completeAddress'],
           "createdAt": DateFormat("MMMM d, yyy 'at h:mm:ss a UTC+8").format(DateTime(currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.minute, currentTime.second)),
+          "age": data['age']
         };
         firestoreDB
             .collection("Complaints")
