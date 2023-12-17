@@ -33,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  // Secured storage 
+  // Secured storage
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
 
   Future<void> setUserData(String key, String value) async {
@@ -42,25 +42,24 @@ class _LoginPageState extends State<LoginPage> {
 
   bool isLoading = false;
 
-
-  Future<void> _checkBiometric() async{
+  Future<void> _checkBiometric() async {
     bool canCheckBiometric = false;
-    try{
+    try {
       canCheckBiometric = await auth.canCheckBiometrics;
-    } on PlatformException catch (e){
+    } on PlatformException catch (e) {
       print(e);
     }
-    if(!mounted) return;
+    if (!mounted) return;
     setState(() {
-      _canCheckBiometric =  canCheckBiometric;
+      _canCheckBiometric = canCheckBiometric;
     });
   }
 
-  Future<void> _getAvailableBiometric() async{
+  Future<void> _getAvailableBiometric() async {
     List<BiometricType> availableBiometric = [];
-    try{
+    try {
       availableBiometric = await auth.getAvailableBiometrics();
-    }on PlatformException catch(e){
+    } on PlatformException catch (e) {
       print(e);
     }
     setState(() {
@@ -68,52 +67,45 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  Future<void> _authenticate() async{
-    bool authenticated =  false;
-    try{
-      authenticated =  await auth.authenticate(
-        localizedReason: "Scan your finger to authenticate",
-        options: const AuthenticationOptions(useErrorDialogs: true, stickyAuth: false)
-        );
-    }on PlatformException catch(e){
+  Future<void> _authenticate() async {
+    bool authenticated = false;
+    try {
+      authenticated = await auth.authenticate(
+          localizedReason: "Scan your finger to authenticate",
+          options: const AuthenticationOptions(
+              useErrorDialogs: true, stickyAuth: false));
+    } on PlatformException catch (e) {
       print(e);
     }
-    if(!mounted) return;
+    if (!mounted) return;
     print(storage.getItem('fingerprint'));
     print(storage.getItem('email'));
     print(storage.getItem('password'));
-      if(storage.getItem('fingerprint') != null){
+    if (storage.getItem('fingerprint') != null) {
+      LoginFunctions loginFunctions = LoginFunctions(storage.getItem('email'),
+          storage.getItem('password'), firebaseQuery, context);
 
-         LoginFunctions loginFunctions = LoginFunctions(
-                        storage.getItem('email'),
-                        storage.getItem('password'),
-                        firebaseQuery,
-                        context);
-
-                    loginFunctions.loginAcount().then((value) {
-                      if (value) {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => MainTab()));
-                      }
-                    });
-      }else{
-        
-         Alert(
-            context: context,
-            type: AlertType.error,
-            desc: 'Your biometrics is not yet enabled.',
-            closeFunction: null,
-            buttons: [
-              DialogButton(
-                  onPressed: (() {
-                    Navigator.pop(context!);
-                  }),
-                  child: const Text('OK'))
-            ]).show();
-      }
+      loginFunctions.loginAcount().then((value) {
+        if (value) {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => MainTab()));
+        }
+      });
+    } else {
+      Alert(
+          context: context,
+          type: AlertType.error,
+          desc: 'Your biometrics is not yet enabled.',
+          closeFunction: null,
+          buttons: [
+            DialogButton(
+                onPressed: (() {
+                  Navigator.pop(context!);
+                }),
+                child: const Text('OK'))
+          ]).show();
+    }
   }
-
-
 
   @override
   void initState() {
@@ -129,7 +121,8 @@ class _LoginPageState extends State<LoginPage> {
       body: Padding(
           padding: EdgeInsets.all(16.0),
           child: Center(
-            child: SingleChildScrollView(child: Column(
+              child: SingleChildScrollView(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 isLoading
@@ -141,15 +134,18 @@ class _LoginPageState extends State<LoginPage> {
                 Text(
                   'Barangay San Nicolas III Appointment APP',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,),
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                 SizedBox(
-                          width: 150,
-                          height: 150,
-                          child: Image.asset(
-                            'assets/sn3.png',
-                          ),
-                        ),
+                SizedBox(
+                  width: 150,
+                  height: 150,
+                  child: Image.asset(
+                    'assets/sn3.png',
+                  ),
+                ),
                 SizedBox(
                   height: 16,
                 ),
@@ -166,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 16),
                 CoreButton(
                   text: 'Login',
-                  onPressed: () async{
+                  onPressed: () async {
                     setState(() {
                       isLoading = true;
                     });
@@ -188,8 +184,13 @@ class _LoginPageState extends State<LoginPage> {
                     });
                   },
                 ),
-                SizedBox(height: 10,),
-                CoreButton(text: 'Login using Fingerprint', onPressed: _authenticate,),
+                SizedBox(
+                  height: 10,
+                ),
+                CoreButton(
+                  text: 'Login using Fingerprint',
+                  onPressed: _authenticate,
+                ),
                 TextButton(
                     onPressed: (() => {
                           Navigator.push(
@@ -198,32 +199,69 @@ class _LoginPageState extends State<LoginPage> {
                                   builder: (context) => RegisterPage()))
                         }),
                     child: Text("Don't have an account? Register here")),
-                SizedBox(height: 10,),
-                Text('HOTLINE NUMBERS',style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold), textAlign: TextAlign.center,),
-                SizedBox(height: 10,),
-                Text('BRGY HALL (046)417 0773',textAlign: TextAlign.center,),
-                SizedBox(height: 5,),
-                Text('BDRRM ALERT 161',textAlign: TextAlign.center,),
-                SizedBox(height: 5,),
-                Text('BFD 046-4176060',textAlign: TextAlign.center,),
-                SizedBox(height: 5,),
-                Text('PNP 046-4176366',textAlign: TextAlign.center,),
-                SizedBox(height: 10,),
-                Text('Office hourse',textAlign: TextAlign.center,),
-                SizedBox(height: 5,),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'HOTLINE NUMBERS',
+                  style:
+                      TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'BRGY HALL (046)417 0773',
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  'BDRRM ALERT 161',
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  'BFD 046-4176060',
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  'PNP 046-4176366',
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Office hours',
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(
+                  height: 5,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                   SizedBox(
-                          width: 42,
-                          height: 42,
-                          child: Image.asset(
-                            'assets/call.png',
-                          ),
-                        ),
-                  Text('Monday to Friday, 8AM to 5PM',textAlign: TextAlign.center,),
-                ],)
-                
+                    SizedBox(
+                      width: 42,
+                      height: 42,
+                      child: Image.asset(
+                        'assets/call.png',
+                      ),
+                    ),
+                    Text(
+                      'Monday to Friday, 8AM to 5PM (Except holidays)',
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                )
               ],
             ),
           ))),
