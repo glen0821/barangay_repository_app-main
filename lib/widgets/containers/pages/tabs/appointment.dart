@@ -270,42 +270,52 @@ class _AppointmentPageState extends State<AppointmentPage> {
                     //     {_certificateController.text, _startDate, _endDate},
                     //     _auth.currentUser!.uid);
                     if (selectedOption == 'Certificate') {
-                      // print(_auth.currentUser);
-                      firebaseQuery
-                          .setCertificate(_auth.currentUser!.uid, _startDate,
-                              purposeController.text)
-                          .then((value) => {
-                                Alert(
-                                    context: context,
-                                    type: AlertType.success,
-                                    desc: "Appointment success",
-                                    closeFunction: null,
-                                    buttons: [
-                                      DialogButton(
-                                          onPressed: (() {
-                                            Navigator.pop(context);
-                                          }),
-                                          child: const Text('OK'))
-                                    ]).show()
-                              });
+                      bool shouldProceed = await showAppointmentConfirmationDialog(context);
+
+                      if (shouldProceed) {
+                        // print(_auth.currentUser);
+                        firebaseQuery
+                            .setCertificate(_auth.currentUser!.uid, _startDate,
+                            purposeController.text)
+                            .then((value) =>
+                        {
+                          Alert(
+                              context: context,
+                              type: AlertType.success,
+                              desc: "Appointment success",
+                              closeFunction: null,
+                              buttons: [
+                                DialogButton(
+                                    onPressed: (() {
+                                      Navigator.pop(context);
+                                    }),
+                                    child: const Text('OK'))
+                              ]).show()
+                        });
+                      }
                     } else if (selectedOption == 'Clearance') {
-                      firebaseQuery
-                          .setClearance(_auth.currentUser!.uid, _startDate,
-                              purposeController.text)
-                          .then((value) => {
-                                Alert(
-                                    context: context,
-                                    type: AlertType.success,
-                                    desc: "Appointment success",
-                                    closeFunction: null,
-                                    buttons: [
-                                      DialogButton(
-                                          onPressed: (() {
-                                            Navigator.pop(context);
-                                          }),
-                                          child: const Text('OK'))
-                                    ]).show()
-                              });
+                      bool shouldProceed = await showAppointmentConfirmationDialog(context);
+
+                      if (shouldProceed) {
+                        firebaseQuery
+                            .setClearance(_auth.currentUser!.uid, _startDate,
+                            purposeController.text)
+                            .then((value) =>
+                        {
+                          Alert(
+                              context: context,
+                              type: AlertType.success,
+                              desc: "Appointment success",
+                              closeFunction: null,
+                              buttons: [
+                                DialogButton(
+                                    onPressed: (() {
+                                      Navigator.pop(context);
+                                    }),
+                                    child: const Text('OK'))
+                              ]).show()
+                        });
+                      }
                     } else if (selectedOption == 'Complaint') {
                       firebaseQuery
                           .setComplaint(_auth.currentUser!.uid, _startDate,
@@ -325,7 +335,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                     ]).show()
                               });
                     } else {
-                      bool shouldProceed = await showConfirmationDialog(context);
+                      bool shouldProceed = await showPaypalConfirmationDialog(context);
 
                       if (shouldProceed) {
                         BuildContext dialogContext = context;
@@ -336,8 +346,8 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                   // sandboxMode: true,
                                     clientId: "AZxYyI4LNE-ZBt6A1GCScu_gXF-XoNbAZTjMj6EpH9SeNsf3TzH2rTdL7esMtmlYWtzJy6Ollbc8Rme0",
                                     secretKey: "EISZmF-_bpCXTKC6vEk9aE9b4ZXJb86Oyz1Mys7wc-Lbcz-9GKIRLzDZSguW4bWwQmeLLqpxcJJOVsuY",
-                                    returnURL: "success.snippetcoder.com", //Pwede to palitan base sa reference nyo
-                                    cancelURL: "cancel.snippetcoder.com", //Pwede to palitan base sa reference nyo
+                                    returnURL: "success.snippetcoder.com", //Pwede to palitan base sa preference nyo
+                                    cancelURL: "cancel.snippetcoder.com", //Pwede to palitan base sa preference nyo
                                     transactions: const [
                                       {
                                         "amount": {

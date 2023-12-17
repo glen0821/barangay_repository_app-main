@@ -133,7 +133,7 @@ String dateToday() {
   return formattedDate;
 }
 
-Future<bool> showConfirmationDialog(BuildContext context) async {
+Future<bool> showPaypalConfirmationDialog(BuildContext context) async {
   bool shouldProceed = false;
 
   await showDialog(
@@ -192,6 +192,92 @@ Future<bool> showConfirmationDialog(BuildContext context) async {
               ],
             ),
           )
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+              minimumSize: MaterialStateProperty.all(Size(double.infinity, 40)),
+            ),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              shouldProceed = true;
+              Navigator.of(context).pop();
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF253B80)),
+              minimumSize: MaterialStateProperty.all(Size(double.infinity, 40)),
+            ),
+            child: const Text(
+              'Proceed',
+              style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      );
+    },
+  );
+
+  return shouldProceed;
+}
+
+Future<bool> showAppointmentConfirmationDialog(BuildContext context) async {
+  bool shouldProceed = false;
+
+  await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: EdgeInsets.all(15),
+        title: Column(
+          children: [
+            Center(
+              child: Image.asset(
+                'assets/id-boy.png',
+                width: 200,
+              ),
+            ),
+            SizedBox(height: 10),
+            const Text(
+              'Before proceeding',
+              style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        content: Container(
+            width: 600,
+            height: 100,
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Take Note:',
+                    style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    '‣ Bring any valid I.D for verification on the date of your appointment',
+                    style: TextStyle(color: Colors.black, fontSize: 14),
+                    textAlign: TextAlign.left,
+                  ),
+                ],
+              ),
+            )
         ),
         actions: [
           ElevatedButton(
