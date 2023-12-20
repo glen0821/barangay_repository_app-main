@@ -12,15 +12,17 @@ class RegisterFunctions {
   BuildContext? _context;
   Widget? _navigator;
   String? _age;
+  String? _birthDate;
 
   RegisterFunctions(String email, String password, String fullName,
-      FirebaseQuery firebaseQuery, BuildContext context, String age) {
+      FirebaseQuery firebaseQuery, BuildContext context, String age, String birthDate) {
     _email = email;
     _password = password;
     _fullName = fullName;
     _firebaseQuery = firebaseQuery;
     _context = context;
     _age = age;
+    _birthDate = birthDate;
   }
   Future<bool> registerAcount() async {
     bool returnFlag = false;

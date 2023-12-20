@@ -1,10 +1,13 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, avoid_unnecessary_containers
 
+import 'package:intl/intl.dart';
 import 'package:barangay_repository_app/firebase_query.dart';
 import 'package:barangay_repository_app/widgets/containers/auth/login/login.dart';
 import 'package:barangay_repository_app/widgets/containers/auth/login/login_functions.dart';
 import 'package:barangay_repository_app/widgets/containers/auth/register/register_functions.dart';
 import 'package:barangay_repository_app/widgets/containers/auth/register/verification_sent_page.dart';
+import 'package:barangay_repository_app/widgets/core/core_calendar/core_calendar.dart';
+import 'package:barangay_repository_app/widgets/core/core_datefield/core_calendarfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +34,7 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController ageController = TextEditingController();
+  TextEditingController birthDateController = TextEditingController();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   FirebaseQuery firebaseQuery = FirebaseQuery();
   bool isLoading = false;
@@ -45,6 +49,24 @@ class _RegisterPageState extends State<RegisterPage> {
     super.initState();
     firebaseQuery.main();
   }
+
+  void ageCalc() {
+    String birthDateText = birthDateController.text;
+
+    if (birthDateText.isNotEmpty) {
+      try {
+        DateTime birthDate = DateFormat("MM/dd/yyyy").parse(birthDateText);
+        int age = AgeCalculator.calculateAge(birthDate);
+
+        setState(() {
+          ageController.text = age.toString();
+        });
+      } catch (e) {
+        print(e);
+      }
+    }
+  }
+
 
   @override
   void dispose() {
@@ -157,6 +179,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               fontSize: 15,
                               labelText: 'Age',
                               controller: ageController,
+                              enabled: false,
                             ),
                           )
                         ],
@@ -167,6 +190,16 @@ class _RegisterPageState extends State<RegisterPage> {
                       CoreTextfield(
                         labelText: 'Address',
                         controller: addressController,
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      CoreDateField(
+                        labelText: 'Birth Date',
+                        controller: birthDateController,
+                        onDateChanged: (DateTime newDate) {
+                          ageCalc();
+                        },
                       ),
                       SizedBox(
                         height: 16,
@@ -281,12 +314,11 @@ class _RegisterPageState extends State<RegisterPage> {
                                 ),
                                 firebaseQuery,
                                 context,
-                                ageController.text
+                                ageController.text,
+                                birthDateController.text,
                               );
-                      
                               registerFunctions.registerAcount().then((value) {
                                 print('value: $value');
-                      
                                 if (value) {
                                   Navigator.push(
                                       context,
@@ -304,7 +336,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                             suffixNameController.text
                                           ),
                                           firebaseAuth.currentUser?.uid, 
-                                          ageController.text)
+                                          ageController.text,
+                                      birthDateController.text)
                                       .then((credentialValue) {
                                     if (credentialValue) {
                                       setState(() {
@@ -314,7 +347,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) => LoginPage()));
+                                          builder: (context) => LoginPage()));
                                     }
                                   });
                                 }
@@ -346,3 +379,19 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 }
+
+class AgeCalculator {
+  static int calculateAge(DateTime birthDate) {
+    DateTime currentDate = DateTime.now();
+    int age = currentDate.year - birthDate.year;
+
+    // Adjust age if the birthday hasn't occurred yet this year
+    if (currentDate.month < birthDate.month ||
+        (currentDate.month == birthDate.month && currentDate.day < birthDate.day)) {
+      age--;
+    }
+
+    return age;
+  }
+}
+

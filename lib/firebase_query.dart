@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:barangay_repository_app/main.dart';
+import 'package:barangay_repository_app/widgets/core/core_calendar/core_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -9,6 +10,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
+
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class FirebaseQuery {
   // FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
@@ -130,7 +133,8 @@ class FirebaseQuery {
     String address,
     String fullName,
     String? docId,
-    String age
+    String age,
+    String birthDate,
   ) async {
     FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
     bool returnFlag = false;
@@ -142,7 +146,8 @@ class FirebaseQuery {
       "lengthOfStay": length_of_stay,
       "completeAddress": address,
       "createdAt": currentTime,
-      "age": age
+      "age": age,
+      "birthDate": birthDate,
     };
     firestoreDB
         .collection("votersList")
@@ -215,8 +220,18 @@ class FirebaseQuery {
           "dateOfAppointment": DateFormat('yyy-M-d').format(DateTime(appointmentDate.year, appointmentDate.month, appointmentDate.day)),
           "appointmentOwner": userId,
           "purpose": purpose,
+          "status": "Processing",
           "address": data['completeAddress'],
-          "createdAt": DateFormat("MMMM d, yyy 'at h:mm:ss a UTC+8").format(DateTime(currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.minute, currentTime.second)),
+          "createdAt": DateFormat("yyyy-M-d").format(
+            DateTime(
+              currentTime.year,
+              currentTime.month,
+              currentTime.day,
+              // currentTime.hour,
+              // currentTime.minute,
+              // currentTime.second,
+            ),
+          )
         };
         firestoreDB
             .collection("barangayCertificate")
@@ -250,8 +265,18 @@ class FirebaseQuery {
           "dateOfAppointment": DateFormat('yyy-M-d').format(DateTime(appointmentDate.year, appointmentDate.month, appointmentDate.day)),
           "appointmentOwner": userId,
           "purpose": purpose,
+          "status": "Processing",
           "address": data['completeAddress'],
-          "createdAt": DateFormat("MMMM d, yyy 'at h:mm:ss a UTC+8").format(DateTime(currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.minute, currentTime.second)),
+          "createdAt": DateFormat("yyyy-M-d").format(
+          DateTime(
+          currentTime.year,
+          currentTime.month,
+          currentTime.day,
+          // currentTime.hour,
+          // currentTime.minute,
+          // currentTime.second,
+          ),
+          )
         };
         firestoreDB
             .collection("barangayClearance")
@@ -341,19 +366,20 @@ class FirebaseQuery {
           "age": age,
           "weight": weight,
           "height": height,
+          "status": "Processing",
           "amountPaid": amount,
           "transactionId": transactionID,
           "transactionDate": currentTime.toUtc().toString(),
-          "createdAt": DateFormat("MMMM d, yyy 'at h:mm:ss a UTC+8").format(
+          "createdAt": DateFormat("yyyy-M-d").format(
             DateTime(
               currentTime.year,
               currentTime.month,
               currentTime.day,
-              currentTime.hour,
-              currentTime.minute,
-              currentTime.second,
+              // currentTime.hour,
+              // currentTime.minute,
+              // currentTime.second,
             ),
-          ),
+          )
         };
         firestoreDB
             .collection("barangayID")
@@ -367,6 +393,24 @@ class FirebaseQuery {
 
     return returnFlag;
   }
+
+
+  Future<bool> hasPendingAppointment(String userId, String collectionName) async {
+    FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
+
+    var querySnapshot = await firestoreDB
+        .collection(collectionName)
+        .where('appointmentOwner', isEqualTo: userId)
+        .where('status', whereIn: ['Processing', 'Ready for pickup'])
+        .get();
+
+    return querySnapshot.docs.isNotEmpty;
+  }
+
+
+
+
+
 
   Future<void> logout(FirebaseAuth auth, Function(void) thenPress) async {
     try {

@@ -270,141 +270,207 @@ class _AppointmentPageState extends State<AppointmentPage> {
                     //     {_certificateController.text, _startDate, _endDate},
                     //     _auth.currentUser!.uid);
                     if (selectedOption == 'Certificate') {
-                      bool shouldProceed = await showAppointmentConfirmationDialog(context);
+                      bool hasPendingAppointments = await firebaseQuery.hasPendingAppointment(_auth.currentUser!.uid, 'barangayCertificate');
 
-                      if (shouldProceed) {
-                        // print(_auth.currentUser);
-                        firebaseQuery
-                            .setCertificate(_auth.currentUser!.uid, _startDate,
-                            purposeController.text)
-                            .then((value) =>
-                        {
-                          Alert(
+                      if (hasPendingAppointments) {
+                        Alert(
+                          context: context,
+                          type: AlertType.warning,
+                          desc: "You already have a pending appointment for Certificate.",
+                          closeFunction: null,
+                          buttons: [
+                            DialogButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        ).show();
+                      } else {
+                        bool shouldProceed = await showAppointmentConfirmationDialog(context);
+
+                        if (shouldProceed) {
+                          firebaseQuery
+                              .setCertificate(_auth.currentUser!.uid, _startDate, purposeController.text)
+                              .then((value) {
+                            Alert(
                               context: context,
                               type: AlertType.success,
                               desc: "Appointment success",
                               closeFunction: null,
                               buttons: [
                                 DialogButton(
-                                    onPressed: (() {
-                                      Navigator.pop(context);
-                                    }),
-                                    child: const Text('OK'))
-                              ]).show()
-                        });
+                                  onPressed: (() {
+                                    Navigator.pop(context);
+                                  }),
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ).show();
+                          });
+                        }
                       }
                     } else if (selectedOption == 'Clearance') {
-                      bool shouldProceed = await showAppointmentConfirmationDialog(context);
+                      bool hasPendingAppointments = await firebaseQuery.hasPendingAppointment(_auth.currentUser!.uid, 'barangayClearance');
 
-                      if (shouldProceed) {
-                        firebaseQuery
-                            .setClearance(_auth.currentUser!.uid, _startDate,
-                            purposeController.text)
-                            .then((value) =>
-                        {
-                          Alert(
+                      if (hasPendingAppointments) {
+                        Alert(
+                          context: context,
+                          type: AlertType.warning,
+                          desc: "You already have a pending appointment for Clearance.",
+                          closeFunction: null,
+                          buttons: [
+                            DialogButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        ).show();
+                      } else {
+                        bool shouldProceed = await showAppointmentConfirmationDialog(context);
+
+                        if (shouldProceed) {
+                          firebaseQuery
+                              .setClearance(_auth.currentUser!.uid, _startDate, purposeController.text)
+                              .then((value) {
+                            Alert(
                               context: context,
                               type: AlertType.success,
                               desc: "Appointment success",
                               closeFunction: null,
                               buttons: [
                                 DialogButton(
-                                    onPressed: (() {
-                                      Navigator.pop(context);
-                                    }),
-                                    child: const Text('OK'))
-                              ]).show()
-                        });
+                                  onPressed: (() {
+                                    Navigator.pop(context);
+                                  }),
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ).show();
+                          });
+                        }
                       }
-                    } else if (selectedOption == 'Complaint') {
+                    }
+                    else if (selectedOption == 'Complaint') {
                       firebaseQuery
                           .setComplaint(_auth.currentUser!.uid, _startDate,
-                              complaintController.text)
-                          .then((value) => {
-                                Alert(
-                                    context: context,
-                                    type: AlertType.success,
-                                    desc: "Appointment success",
-                                    closeFunction: null,
-                                    buttons: [
-                                      DialogButton(
-                                          onPressed: (() {
-                                            Navigator.pop(context);
-                                          }),
-                                          child: const Text('OK'))
-                                    ]).show()
-                              });
+                          complaintController.text)
+                          .then((value) =>
+                      {
+                        Alert(
+                            context: context,
+                            type: AlertType.success,
+                            desc: "Appointment success",
+                            closeFunction: null,
+                            buttons: [
+                              DialogButton(
+                                  onPressed: (() {
+                                    Navigator.pop(context);
+                                  }),
+                                  child: const Text('OK'))
+                            ]).show()
+                      });
                     } else {
-                      bool shouldProceed = await showPaypalConfirmationDialog(context);
+                      bool hasPendingAppointments = await firebaseQuery.hasPendingAppointment(_auth.currentUser!.uid, 'barangayID');
 
-                      if (shouldProceed) {
-                        BuildContext dialogContext = context;
-                        Map<String, dynamic>? result = await Navigator.push(dialogContext,
-                          MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                PaypalCheckout(
-                                  // sandboxMode: true,
-                                    clientId: "AZxYyI4LNE-ZBt6A1GCScu_gXF-XoNbAZTjMj6EpH9SeNsf3TzH2rTdL7esMtmlYWtzJy6Ollbc8Rme0",
-                                    secretKey: "EISZmF-_bpCXTKC6vEk9aE9b4ZXJb86Oyz1Mys7wc-Lbcz-9GKIRLzDZSguW4bWwQmeLLqpxcJJOVsuY",
-                                    returnURL: "success.snippetcoder.com", //Pwede to palitan base sa preference nyo
-                                    cancelURL: "cancel.snippetcoder.com", //Pwede to palitan base sa preference nyo
-                                    transactions: const [
-                                      {
-                                        "amount": {
-                                          "total": '100.00',
-                                          "currency": "PHP",
-                                          "details": {
-                                            "subtotal": '100.00',
-                                          }
-                                        },
-                                        "description":
-                                        "Your Barangay ID order description.",
-                                        "item_list": {
-                                          "items": [
-                                            {
-                                              "name": "Barangay ID",
-                                              "quantity": 1,
-                                              "price": '100.00',
-                                              "currency": "PHP"
+                      if (hasPendingAppointments) {
+                        Alert(
+                          context: context,
+                          type: AlertType.warning,
+                          desc: "You already have a pending appointment for Barangay ID.",
+                          closeFunction: null,
+                          buttons: [
+                            DialogButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        ).show();
+                      } else {
+                        bool shouldProceed = await showPaypalConfirmationDialog(context);
+
+                        if (shouldProceed) {
+                          BuildContext dialogContext = context;
+                          Map<String, dynamic>? result = await Navigator.push(
+                            dialogContext,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  PaypalCheckout(
+                                    // sandboxMode: true,
+                                      clientId: "AZxYyI4LNE-ZBt6A1GCScu_gXF-XoNbAZTjMj6EpH9SeNsf3TzH2rTdL7esMtmlYWtzJy6Ollbc8Rme0",
+                                      secretKey: "EISZmF-_bpCXTKC6vEk9aE9b4ZXJb86Oyz1Mys7wc-Lbcz-9GKIRLzDZSguW4bWwQmeLLqpxcJJOVsuY",
+                                      returnURL: "success.snippetcoder.com",
+                                      //Pwede to palitan base sa preference nyo
+                                      cancelURL: "cancel.snippetcoder.com",
+                                      //Pwede to palitan base sa preference nyo
+                                      transactions: const [
+                                        {
+                                          "amount": {
+                                            "total": '100.00',
+                                            "currency": "PHP",
+                                            "details": {
+                                              "subtotal": '100.00',
                                             }
-                                          ],
+                                          },
+                                          "description":
+                                          "Your Barangay ID order description.",
+                                          "item_list": {
+                                            "items": [
+                                              {
+                                                "name": "Barangay ID",
+                                                "quantity": 1,
+                                                "price": '100.00',
+                                                "currency": "PHP"
+                                              }
+                                            ],
+                                          }
                                         }
-                                      }
-                                    ],
-                                    note: "Contact us for any questions on your order.",
-                                    onSuccess: (Map params) async {
-                                      // print("onSuccess: $params"); Uncomment if want nyo maprint ang whole transaction details:>
+                                      ],
+                                      note: "Contact us for any questions on your order.",
+                                      onSuccess: (Map params) async {
+                                        // print("onSuccess: $params"); Uncomment if want nyo maprint ang whole transaction details:>
 
-                                      String transactionId = (params['data'] != null && params['data']['id'] != null) ? params['data']['id'] : '';
+                                        String transactionId = (params['data'] !=
+                                            null &&
+                                            params['data']['id'] != null)
+                                            ? params['data']['id']
+                                            : '';
 
-                                      await firebaseQuery.setBrgID(
-                                        _auth.currentUser!.uid,
-                                        _startDate,
-                                        selectedGender,
-                                        _age.text,
-                                        _weight.text,
-                                        _height.text,
-                                        '100.00',
-                                        transactionId,
-                                        _IdImageFile,
-                                      );
-                                      showTransactionReceipt(context, transactionId);
-                                      selectedGender = 'Male';
-                                      _age.clear();
-                                      _weight.clear();
-                                      _height.clear();
-                                    },
-                                    onError: (error) {
-                                      print("onError: $error");
-                                    },
-                                    onCancel: () {
-                                      print('Transaction cancelled');
+                                        await firebaseQuery.setBrgID(
+                                          _auth.currentUser!.uid,
+                                          _startDate,
+                                          selectedGender,
+                                          _age.text,
+                                          _weight.text,
+                                          _height.text,
+                                          '100.00',
+                                          transactionId,
+                                          _IdImageFile,
+                                        );
+                                        showTransactionReceipt(
+                                            context, transactionId);
+                                        selectedGender = 'Male';
+                                        _age.clear();
+                                        _weight.clear();
+                                        _height.clear();
+                                      },
+                                      onError: (error) {
+                                        print("onError: $error");
+                                      },
+                                      onCancel: () {
+                                        print('Transaction cancelled');
                                     }
-                                ),
+                                 ),
                               ),
                             ); // **Warning lang yan**
                           }
-                      }
+                        }
+                      };
                     },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryColor,
