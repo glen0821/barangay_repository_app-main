@@ -39,6 +39,10 @@ class _RegisterPageState extends State<RegisterPage> {
   FirebaseQuery firebaseQuery = FirebaseQuery();
   bool isLoading = false;
   bool _passVisible = false;
+  bool _confirmpassVisible = false;
+
+  // Length, Capital, Number
+  List<Color> _passTips = [Colors.red, Colors.red, Colors.red];
 
   // No color = 0, Red = 1, Orange = 2, Green = 3
   int _passStatus = 0;
@@ -232,21 +236,29 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                             onChanged: (String text) {
                               setState(() {
+                                _passTips[1] = RegExp(r"[A-Z]").hasMatch(text) ? Colors.green : Colors.red;
+                                _passTips[2] = RegExp(r"[0-9]").hasMatch(text) ? Colors.green : Colors.red;
+
                                 if (text.isEmpty) {
+                                  _passTips[0] = Colors.red;
                                   _passStatus = 0;
-                                } else if (text.length <= 6) {
+                                } else if (text.length <= 7) {
+                                  _passTips[0] = Colors.red;
                                   _passStatus = 1;
                                 } else if (text.length < 12) {
                                   _passStatus = 2;
-                                  if (confirmPasswordController.text.isEmpty) {
-                                    _confirmPassStatus = 0;
-                                  } else if (confirmPasswordController.text != text) {
-                                    _confirmPassStatus = 1;
-                                  } else {
-                                    _confirmPassStatus = 3;
-                                  }
+                                  _passTips[0] = Colors.green;
                                 } else {
+                                  _passTips[0] = Colors.green;
                                   _passStatus = 3;
+                                }
+
+                                if (confirmPasswordController.text.isEmpty) {
+                                  _confirmPassStatus = 0;
+                                } else if (_passStatus <= 1 || confirmPasswordController.text != text) {
+                                  _confirmPassStatus = 1;
+                                } else {
+                                  _confirmPassStatus = 3;
                                 }
                               });
                             },
@@ -267,9 +279,16 @@ class _RegisterPageState extends State<RegisterPage> {
                       Column(
                         children: [
                           TextField(
+                            obscureText: !_confirmpassVisible,
                             decoration: InputDecoration(
                               hintText: 'Confirm Password',
-                              border: OutlineInputBorder()
+                              border: OutlineInputBorder(),
+                              suffixIcon: IconButton(
+                                icon: Icon(_confirmpassVisible ? Icons.visibility : Icons.visibility_off),
+                                onPressed: () => {
+                                  setState(() {_confirmpassVisible = !_confirmpassVisible;})
+                                }
+                              )
                             ),
                             onChanged: (String text) {
                               setState(() {
@@ -282,7 +301,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                 }
                               });
                             },
-                            obscureText: true,
                             controller: confirmPasswordController,
                           ),
                           Container(
@@ -293,6 +311,33 @@ class _RegisterPageState extends State<RegisterPage> {
                             height: 4,
                           )
                         ],
+                      ),
+                      SizedBox(
+                        width: 406,
+                        child: Text(
+                          "• Password must be 8 characters long",
+                          style: TextStyle(
+                            color: _passTips[0]
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 406,
+                        child: Text(
+                          "• Password must have a capital letter",
+                          style: TextStyle(
+                            color: _passTips[1]
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 406,
+                        child: Text(
+                          "• Password must have a number",
+                          style: TextStyle(
+                            color: _passTips[2]
+                          ),
+                        ),
                       ),
                       SizedBox(height: 12),
                       CoreButton(
