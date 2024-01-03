@@ -225,6 +225,7 @@ class _LoginPageState extends State<LoginPage> {
                       });
                       if (value) {
                         storage.setItem('password', passwordController.text);
+                        Navigator.pop(context);
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => MainTab()));
                       }
