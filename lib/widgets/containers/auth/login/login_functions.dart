@@ -57,7 +57,7 @@ class LoginFunctions {
         // });
       }
     });
-
     return returnFlag;
   }
+
 }
