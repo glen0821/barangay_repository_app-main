@@ -34,6 +34,10 @@ class _AppointmentPageState extends State<AppointmentPage> {
 
   final TextEditingController _height = TextEditingController();
 
+  final TextEditingController _NameEmCon = TextEditingController();
+
+  final TextEditingController _EmCon = TextEditingController();
+
   final TextEditingController purposeController = TextEditingController();
 
   final TextEditingController complaintController = TextEditingController();
@@ -256,6 +260,16 @@ class _AppointmentPageState extends State<AppointmentPage> {
                         CoreTextfield(
                           labelText: 'Height (cm)',
                           controller: _height,
+                        ),
+                        const SizedBox(height: 16),
+                        CoreTextfield(
+                          labelText: 'Name Of Emergency Contact',
+                          controller: _NameEmCon,
+                        ),
+                        const SizedBox(height: 16),
+                        CoreTextfield(
+                          labelText: 'Contact Number',
+                          controller: _EmCon,
                         ),
                         const SizedBox(height: 16),
                         // ElevatedButton(onPressed: (){
