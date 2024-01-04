@@ -290,6 +290,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             onPressed: () {
                               firebaseQuery.logout(_auth, (value) {
+                                Navigator.pop(context);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
