@@ -4,13 +4,16 @@ import 'package:barangay_repository_app/widgets/containers/dialog/dialogs.dart';
 import 'package:barangay_repository_app/widgets/core/core_dropdown/core_dropdown.dart';
 import 'package:barangay_repository_app/widgets/core/core_id_holder/core_id_holder.dart';
 import 'package:barangay_repository_app/widgets/core/core_textfield/core_textfield.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paypal/flutter_paypal.dart';
 import 'package:flutter_paypal_checkout/flutter_paypal_checkout.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:barangay_repository_app/constants/colors.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 class AppointmentPage extends StatefulWidget {
   const AppointmentPage({super.key});
@@ -40,9 +43,21 @@ class _AppointmentPageState extends State<AppointmentPage> {
 
   final TextEditingController purposeController = TextEditingController();
 
-  final TextEditingController complaintController = TextEditingController();
+  late TextEditingController complaintController = TextEditingController();
+
+  late TextEditingController quantityController = TextEditingController();
+
+  late TextEditingController defendantNameController = TextEditingController();
+
+  late TextEditingController defendantLocationController = TextEditingController();
+
+  late TextEditingController locationController = TextEditingController();
+
+  late TextEditingController contactNumberController = TextEditingController();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String selectedComplaint = 'Person';
 
   String selectedGender = 'Male';
 
@@ -62,6 +77,11 @@ class _AppointmentPageState extends State<AppointmentPage> {
     'Female',
   ];
 
+  List<String> complaintOptions = [
+    'Person',
+    'General (Other Complaint)'
+  ];
+
   String selectedOption = '';
 
   void handleDropdownChange(String newValue) {
@@ -74,6 +94,40 @@ class _AppointmentPageState extends State<AppointmentPage> {
     setState(() {
       selectedGender = newValue;
     });
+  }
+
+  void handleSelectedComplaint(String newValue) {
+    setState(() {
+      selectedComplaint = newValue;
+    });
+  }
+
+  PlatformFile? pickedFile;
+  File? displayFile;
+  bool? isLoading;
+
+  Future uploadFile() async {
+    final path = 'complaint_media/${contactNumberController.text}/${pickedFile!.name}';
+    final file = File(pickedFile!.path!);
+
+    final ref = FirebaseStorage.instance.ref().child(path);
+    ref.putFile(file);
+  }
+
+  void selectFile() async {
+    try{
+    setState(() {
+    });
+      final result = await FilePicker.platform.pickFiles(allowMultiple: true, type: FileType.any);
+
+      if(result != null){
+        pickedFile = result.files.first;
+        displayFile = File(pickedFile!.path.toString());
+      }
+    setState(() {});
+    }catch(e){
+      print(e);
+    }
   }
 
   @override
@@ -166,12 +220,40 @@ class _AppointmentPageState extends State<AppointmentPage> {
                     ),
                   ),
                 const SizedBox(height:16),
-                CoreDropdown(
-                  labelText: 'Select an option',
-                  options: dropdownOptions,
-                  selectedOption: selectedOption,
-                  onChanged: handleDropdownChange,
-                  enabled: true,
+                Row(
+                  children: [
+                    Expanded(
+                      child: CoreDropdown(
+                        labelText: 'Select an option',
+                        options: dropdownOptions,
+                        selectedOption: selectedOption,
+                        onChanged: handleDropdownChange,
+                        enabled: true,
+                      ),
+                    ),
+                    Visibility(
+                      visible: selectedOption == 'Clearance' ||
+                                selectedOption == 'Certificate'
+                            ? true
+                            : false,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 15),
+                        child: SizedBox(
+                          width: 100,
+                          height: 47,
+                          child: TextFormField(
+                            keyboardType: TextInputType.number,
+                            maxLines: 1,
+                            controller: quantityController = TextEditingController(text: '1'),
+                            decoration: const InputDecoration(
+                              labelText: 'Quantity',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 // TextFormField(
                 //   controller: _certificateController,
@@ -198,13 +280,111 @@ class _AppointmentPageState extends State<AppointmentPage> {
                     visible: selectedOption == 'Complaint'
                         ? true
                         : false,
-                    child: TextFormField(
-                      maxLines: 3,
-                      controller: complaintController,
-                      decoration: const InputDecoration(
-                        labelText: 'Complaint',
-                        border: OutlineInputBorder(),
+                    child: Column(
+                      children: [
+                      const SizedBox(height: 6),
+                        CoreDropdown(
+                          labelText: 'Complaint',
+                          options: complaintOptions,
+                          selectedOption: selectedComplaint,
+                          onChanged: handleSelectedComplaint,
+                          enabled: true,
                       ),
+                      const SizedBox(height: 16),
+                      Visibility(
+                        visible: selectedComplaint == 'Person'
+                        ? true
+                        : false,
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 50,
+                              child: TextFormField(
+                                maxLines: 1,
+                                controller: defendantNameController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Name of Defendant',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            SizedBox(
+                              height: 50,
+                              child: TextFormField(
+                                maxLines: 1,
+                                controller: defendantLocationController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Location of Defendant',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        )
+                      ),
+                      Visibility(
+                        visible: selectedComplaint == 'General (Other Complaint)'
+                        ? true
+                        : false,
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 50,
+                              child: TextFormField(
+                                maxLines: 1,
+                                controller: locationController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Location',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        )
+                      ),
+                      ElevatedButton(
+                        onPressed: (){
+                          selectFile();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryColor,
+                        ),
+                        child: const Text('Evidence (Upload Photo/Video)', 
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      if(pickedFile != null)
+                        SizedBox(
+                          child: Image.file(displayFile!),
+                        ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        height: 100,
+                        child: IntlPhoneField(
+                          initialCountryCode: 'PH',
+                          keyboardType: TextInputType.phone,
+                          controller: contactNumberController,
+                            decoration: const InputDecoration(
+                              labelText: 'Your contact number',
+                              border: OutlineInputBorder(),
+                          ),
+                        )
+                      ),
+                        TextFormField(
+                          maxLines: 3,
+                          controller: complaintController,
+                          decoration: const InputDecoration(
+                            labelText: 'Complaint',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ],
                     )),
                 const SizedBox(height: 16),
                 // const Text(
@@ -306,7 +486,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
 
                         if (shouldProceed) {
                           firebaseQuery
-                              .setCertificate(_auth.currentUser!.uid, _startDate, purposeController.text)
+                              .setCertificate(_auth.currentUser!.uid, _startDate, purposeController.text, quantityController.text)
                               .then((value) {
                             Alert(
                               context: context,
@@ -348,7 +528,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
 
                         if (shouldProceed) {
                           firebaseQuery
-                              .setClearance(_auth.currentUser!.uid, _startDate, purposeController.text)
+                              .setClearance(_auth.currentUser!.uid, _startDate, purposeController.text, quantityController.text)
                               .then((value) {
                             Alert(
                               context: context,
@@ -371,7 +551,8 @@ class _AppointmentPageState extends State<AppointmentPage> {
                     else if (selectedOption == 'Complaint') {
                       firebaseQuery
                           .setComplaint(_auth.currentUser!.uid, _startDate,
-                          complaintController.text)
+                          complaintController.text, selectedComplaint, defendantNameController.text, 
+                          defendantLocationController.text, locationController.text, contactNumberController.text)
                           .then((value) =>
                       {
                         Alert(
@@ -387,6 +568,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                   child: const Text('OK'))
                             ]).show()
                       });
+                      uploadFile();
                     } else {
                       bool hasPendingAppointments = await firebaseQuery.hasPendingAppointment(_auth.currentUser!.uid, 'barangayID');
 

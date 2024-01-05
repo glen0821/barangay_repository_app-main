@@ -205,6 +205,7 @@ class FirebaseQuery {
     String userId,
     DateTime appointmentDate,
     String purpose,
+    String quantity
   ) async {
     FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
     bool returnFlag = false;
@@ -231,7 +232,8 @@ class FirebaseQuery {
               // currentTime.minute,
               // currentTime.second,
             ),
-          )
+          ),
+          "quantity": quantity
         };
         firestoreDB
             .collection("barangayCertificate")
@@ -249,6 +251,7 @@ class FirebaseQuery {
     String userId,
     dynamic appointmentDate,
     String purpose,
+    String quantity
   ) async {
     FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
     bool returnFlag = false;
@@ -276,7 +279,8 @@ class FirebaseQuery {
           // currentTime.minute,
           // currentTime.second,
           ),
-          )
+          ),
+          "quantity": quantity
         };
         firestoreDB
             .collection("barangayClearance")
@@ -294,6 +298,11 @@ class FirebaseQuery {
     String userId,
     DateTime appointmentDate,
     String complaint,
+    String selectedComplaint,
+    String defendantName,
+    String defendantLocation,
+    String location,
+    String contactNumber
   ) async {
     FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
     bool returnFlag = false;
@@ -311,7 +320,12 @@ class FirebaseQuery {
           "complaint": complaint,
           "address": data['completeAddress'],
           "createdAt": DateFormat("MMMM d, yyy 'at h:mm:ss a UTC+8").format(DateTime(currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.minute, currentTime.second)),
-          "age": data['age']
+          "age": data['age'],
+          "selectedComplaint" : selectedComplaint,
+          "defendantName" : defendantName,
+          "defendantLocation" : defendantLocation,
+          "location" : location,
+          "contactNumber" : contactNumber
         };
         firestoreDB
             .collection("Complaints")
