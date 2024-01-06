@@ -424,6 +424,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                         isLoading = false;
                                       });
                                       firebaseAuth.signOut();
+                                      Navigator.pop(context);
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(

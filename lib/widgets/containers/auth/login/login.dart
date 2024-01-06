@@ -87,6 +87,7 @@ class _LoginPageState extends State<LoginPage> {
 
       loginFunctions.loginAcount().then((value) {
         if (value) {
+          Navigator.pop(context);
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => MainTab()));
         }
