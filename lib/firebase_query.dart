@@ -233,7 +233,7 @@ class FirebaseQuery {
               // currentTime.second,
             ),
           ),
-          "quantity": quantity
+          "quantity": quantity,
         };
         firestoreDB
             .collection("barangayCertificate")
@@ -278,9 +278,9 @@ class FirebaseQuery {
           // currentTime.hour,
           // currentTime.minute,
           // currentTime.second,
+          )
           ),
-          ),
-          "quantity": quantity
+          "quantity": quantity,
         };
         firestoreDB
             .collection("barangayClearance")
@@ -412,13 +412,20 @@ class FirebaseQuery {
   Future<bool> hasPendingAppointment(String userId, String collectionName) async {
     FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
 
-    var querySnapshot = await firestoreDB
+    if(collectionName != 'Complaints'){
+      var querySnapshot = await firestoreDB
         .collection(collectionName)
         .where('appointmentOwner', isEqualTo: userId)
         .where('status', whereIn: ['Processing', 'Ready for pickup'])
         .get();
+        return querySnapshot.docs.isNotEmpty;
+    } else {var querySnapshot = await firestoreDB
+        .collection(collectionName)
+        .where('appointmentOwner', isEqualTo: userId)
+        .get();
 
-    return querySnapshot.docs.isNotEmpty;
+        return querySnapshot.docs.isNotEmpty;
+    }
   }
 
 

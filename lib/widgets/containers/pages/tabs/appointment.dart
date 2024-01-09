@@ -182,505 +182,530 @@ class _AppointmentPageState extends State<AppointmentPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Text(
-                  'Book a Appointment',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                Visibility(
-                    visible: selectedOption == 'Identification Card',
-                    child: Column(
-                      children: [
-                        SizedBox(height: 10),
-                        CoreIdHolder(
-                          onIdImageChanged: (File? IdImageFile) {
-                            if (IdImageFile != null) {
-                              setState(() {
-                                _IdImageFile = IdImageFile;
-                              });
-                            } else {
-                              print('Walang file na upload');
-                            }
-                          },
-                        ),
-                        SizedBox(height: 10),
-                        const Text(
-                          'Upload your ID picture (2x2)',
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Book a Appointment',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                const SizedBox(height:16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CoreDropdown(
-                        labelText: 'Select an option',
-                        options: dropdownOptions,
-                        selectedOption: selectedOption,
-                        onChanged: handleDropdownChange,
-                        enabled: true,
+                  Visibility(
+                      visible: selectedOption == 'Identification Card',
+                      child: Column(
+                        children: [
+                          SizedBox(height: 10),
+                          CoreIdHolder(
+                            onIdImageChanged: (File? IdImageFile) {
+                              if (IdImageFile != null) {
+                                setState(() {
+                                  _IdImageFile = IdImageFile;
+                                });
+                              } else {
+                                print('Walang file na upload');
+                              }
+                            },
+                          ),
+                          SizedBox(height: 10),
+                          const Text(
+                            'Upload your ID picture (2x2)',
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
                     ),
-                    Visibility(
-                      visible: selectedOption == 'Clearance' ||
-                                selectedOption == 'Certificate'
-                            ? true
-                            : false,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 15),
-                        child: SizedBox(
-                          width: 100,
-                          height: 47,
-                          child: TextFormField(
-                            keyboardType: TextInputType.number,
-                            maxLines: 1,
-                            controller: quantityController = TextEditingController(text: '1'),
-                            decoration: const InputDecoration(
-                              labelText: 'Quantity',
-                              border: OutlineInputBorder(),
+                  const SizedBox(height:16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CoreDropdown(
+                          labelText: 'Select an option',
+                          options: dropdownOptions,
+                          selectedOption: selectedOption,
+                          onChanged: handleDropdownChange,
+                          enabled: true,
+                        ),
+                      ),
+                      Visibility(
+                        visible: selectedOption == 'Clearance' ||
+                                  selectedOption == 'Certificate'
+                              ? true
+                              : false,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 15),
+                          child: SizedBox(
+                            width: 100,
+                            height: 47,
+                            child: TextFormField(
+                              keyboardType: TextInputType.number,
+                              maxLines: 1,
+                              controller: quantityController = TextEditingController(text: '1'),
+                              decoration: const InputDecoration(
+                                labelText: 'Quantity',
+                                border: OutlineInputBorder(),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                // TextFormField(
-                //   controller: _certificateController,
-                //   decoration: const InputDecoration(
-                //     labelText: 'Certificate/Appointment',
-                //     border: OutlineInputBorder(),
-                //   ),
-                // ),
-                const SizedBox(height: 10),
-                Visibility(
-                    visible: selectedOption == 'Clearance' ||
-                            selectedOption == 'Certificate'
-                        ? true
-                        : false,
-                    child: TextFormField(
-                      maxLines: 3,
-                      controller: purposeController,
+                    ],
+                  ),
+                  // TextFormField(
+                  //   controller: _certificateController,
+                  //   decoration: const InputDecoration(
+                  //     labelText: 'Certificate/Appointment',
+                  //     border: OutlineInputBorder(),
+                  //   ),
+                  // ),
+                  const SizedBox(height: 10),
+                  Visibility(
+                      visible: selectedOption == 'Clearance' ||
+                              selectedOption == 'Certificate'
+                          ? true
+                          : false,
+                      child: TextFormField(
+                        maxLines: 3,
+                        controller: purposeController,
+                        decoration: const InputDecoration(
+                          labelText: 'Purpose',
+                          border: OutlineInputBorder(),
+                        ),
+                      )),
+                  Visibility(
+                      visible: selectedOption == 'Complaint'
+                          ? true
+                          : false,
+                      child: Column(
+                        children: [
+                        const SizedBox(height: 6),
+                          CoreDropdown(
+                            labelText: 'Complaint',
+                            options: complaintOptions,
+                            selectedOption: selectedComplaint,
+                            onChanged: handleSelectedComplaint,
+                            enabled: true,
+                        ),
+                        const SizedBox(height: 16),
+                        Visibility(
+                          visible: selectedComplaint == 'Person'
+                          ? true
+                          : false,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 50,
+                                child: TextFormField(
+                                  maxLines: 1,
+                                  controller: defendantNameController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Name of Defendant',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              SizedBox(
+                                height: 50,
+                                child: TextFormField(
+                                  maxLines: 1,
+                                  controller: defendantLocationController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Location of Defendant',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+                          )
+                        ),
+                        Visibility(
+                          visible: selectedComplaint == 'General (Other Complaint)'
+                          ? true
+                          : false,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 50,
+                                child: TextFormField(
+                                  maxLines: 1,
+                                  controller: locationController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Location',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+                          )
+                        ),
+                        ElevatedButton(
+                          onPressed: (){
+                            selectFile();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryColor,
+                          ),
+                          child: const Text('Evidence (Upload Photo/Video)', 
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        if(pickedFile != null)
+                          SizedBox(
+                            child: Image.file(displayFile!),
+                          ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          height: 100,
+                          child: IntlPhoneField(
+                            initialCountryCode: 'PH',
+                            keyboardType: TextInputType.phone,
+                            controller: contactNumberController,
+                              decoration: const InputDecoration(
+                                labelText: 'Your contact number',
+                                border: OutlineInputBorder(),
+                            ),
+                          )
+                        ),
+                          TextFormField(
+                            maxLines: 3,
+                            controller: complaintController,
+                            decoration: const InputDecoration(
+                              labelText: 'Complaint',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ],
+                      )),
+                  const SizedBox(height: 16),
+                  // const Text(
+                  //   'Priority',
+                  //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  // ),
+                  // const SizedBox(height: 16),
+                  // Wrap(
+                  //   spacing: 8.0,
+                  //   children: [
+                  //     _buildPriorityButton(1, Icons.low_priority),
+                  //     _buildPriorityButton(2, Icons.priority_high),
+                  //     _buildPriorityButton(3, Icons.block),
+                  //   ],
+                  // ),
+                  // const SizedBox(height: 16),
+                  InkWell(
+                    onTap: () => _selectAppointmentDate(context),
+                    child: InputDecorator(
                       decoration: const InputDecoration(
-                        labelText: 'Purpose',
+                        labelText: 'Select appointment date',
                         border: OutlineInputBorder(),
                       ),
-                    )),
-                Visibility(
-                    visible: selectedOption == 'Complaint'
-                        ? true
-                        : false,
-                    child: Column(
-                      children: [
-                      const SizedBox(height: 6),
-                        CoreDropdown(
-                          labelText: 'Complaint',
-                          options: complaintOptions,
-                          selectedOption: selectedComplaint,
-                          onChanged: handleSelectedComplaint,
-                          enabled: true,
+                      child: Text(
+                        '${_startDate.day}/${_startDate.month}/${_startDate.year}',
                       ),
-                      const SizedBox(height: 16),
-                      Visibility(
-                        visible: selectedComplaint == 'Person'
-                        ? true
-                        : false,
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 50,
-                              child: TextFormField(
-                                maxLines: 1,
-                                controller: defendantNameController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Name of Defendant',
-                                  border: OutlineInputBorder(),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            SizedBox(
-                              height: 50,
-                              child: TextFormField(
-                                maxLines: 1,
-                                controller: defendantLocationController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Location of Defendant',
-                                  border: OutlineInputBorder(),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                          ],
-                        )
-                      ),
-                      Visibility(
-                        visible: selectedComplaint == 'General (Other Complaint)'
-                        ? true
-                        : false,
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 50,
-                              child: TextFormField(
-                                maxLines: 1,
-                                controller: locationController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Location',
-                                  border: OutlineInputBorder(),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                          ],
-                        )
-                      ),
-                      ElevatedButton(
-                        onPressed: (){
-                          selectFile();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryColor,
-                        ),
-                        child: const Text('Evidence (Upload Photo/Video)', 
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      if(pickedFile != null)
-                        SizedBox(
-                          child: Image.file(displayFile!),
-                        ),
-                      const SizedBox(height: 16),
-                      SizedBox(
-                        height: 100,
-                        child: IntlPhoneField(
-                          initialCountryCode: 'PH',
-                          keyboardType: TextInputType.phone,
-                          controller: contactNumberController,
-                            decoration: const InputDecoration(
-                              labelText: 'Your contact number',
-                              border: OutlineInputBorder(),
-                          ),
-                        )
-                      ),
-                        TextFormField(
-                          maxLines: 3,
-                          controller: complaintController,
-                          decoration: const InputDecoration(
-                            labelText: 'Complaint',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      ],
-                    )),
-                const SizedBox(height: 16),
-                // const Text(
-                //   'Priority',
-                //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                // ),
-                // const SizedBox(height: 16),
-                // Wrap(
-                //   spacing: 8.0,
-                //   children: [
-                //     _buildPriorityButton(1, Icons.low_priority),
-                //     _buildPriorityButton(2, Icons.priority_high),
-                //     _buildPriorityButton(3, Icons.block),
-                //   ],
-                // ),
-                // const SizedBox(height: 16),
-                InkWell(
-                  onTap: () => _selectAppointmentDate(context),
-                  child: InputDecorator(
-                    decoration: const InputDecoration(
-                      labelText: 'Select appointment date',
-                      border: OutlineInputBorder(),
-                    ),
-                    child: Text(
-                      '${_startDate.day}/${_startDate.month}/${_startDate.year}',
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Visibility(
-                    visible:
-                    selectedOption == 'Identification Card' ? true : false,
-                    child: Column(
-                      children: [
-                        CoreDropdown(
-                          labelText: 'Select Gender',
-                          options: gender,
-                          selectedOption: selectedGender,
-                          onChanged: handleGenderChange,
-                          enabled: true,
-                        ),
-                        const SizedBox(height: 16),
-                        CoreTextfield(
-                          labelText: 'Age',
-                          controller: _age,
-                        ),
-                        const SizedBox(height: 16),
-                        CoreTextfield(
-                          labelText: 'Weight (kg)',
-                          controller: _weight,
-                        ),
-                        const SizedBox(height: 16),
-                        CoreTextfield(
-                          labelText: 'Height (cm)',
-                          controller: _height,
-                        ),
-                        const SizedBox(height: 16),
-                        CoreTextfield(
-                          labelText: 'Name Of Emergency Contact',
-                          controller: _NameEmCon,
-                        ),
-                        const SizedBox(height: 16),
-                        CoreTextfield(
-                          labelText: 'Contact Number',
-                          controller: _EmCon,
-                        ),
-                        const SizedBox(height: 16),
-                        // ElevatedButton(onPressed: (){
-                        //   print("Test");
-                        // }, child: const Text('Add Payment'))
-                      ],
-                    )),
-                ElevatedButton(
-                  onPressed: () async {
-                    // Handle save appointment logic
-                    // firebaseQuery.appointOrRequestAppointment(
-                    //     {_certificateController.text, _startDate, _endDate},
-                    //     _auth.currentUser!.uid);
-                    if (selectedOption == 'Certificate') {
-                      bool hasPendingAppointments = await firebaseQuery.hasPendingAppointment(_auth.currentUser!.uid, 'barangayCertificate');
-
-                      if (hasPendingAppointments) {
-                        Alert(
-                          context: context,
-                          type: AlertType.warning,
-                          desc: "You already have a pending appointment for Certificate.",
-                          closeFunction: null,
-                          buttons: [
-                            DialogButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ).show();
-                      } else {
-                        bool shouldProceed = await showAppointmentConfirmationDialog(context);
-
-                        if (shouldProceed) {
-                          firebaseQuery
-                              .setCertificate(_auth.currentUser!.uid, _startDate, purposeController.text, quantityController.text)
-                              .then((value) {
-                            Alert(
-                              context: context,
-                              type: AlertType.success,
-                              desc: "Appointment success",
-                              closeFunction: null,
-                              buttons: [
-                                DialogButton(
-                                  onPressed: (() {
-                                    Navigator.pop(context);
-                                  }),
-                                  child: const Text('OK'),
-                                ),
-                              ],
-                            ).show();
-                          });
-                        }
-                      }
-                    } else if (selectedOption == 'Clearance') {
-                      bool hasPendingAppointments = await firebaseQuery.hasPendingAppointment(_auth.currentUser!.uid, 'barangayClearance');
-
-                      if (hasPendingAppointments) {
-                        Alert(
-                          context: context,
-                          type: AlertType.warning,
-                          desc: "You already have a pending appointment for Clearance.",
-                          closeFunction: null,
-                          buttons: [
-                            DialogButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ).show();
-                      } else {
-                        bool shouldProceed = await showAppointmentConfirmationDialog(context);
-
-                        if (shouldProceed) {
-                          firebaseQuery
-                              .setClearance(_auth.currentUser!.uid, _startDate, purposeController.text, quantityController.text)
-                              .then((value) {
-                            Alert(
-                              context: context,
-                              type: AlertType.success,
-                              desc: "Appointment success",
-                              closeFunction: null,
-                              buttons: [
-                                DialogButton(
-                                  onPressed: (() {
-                                    Navigator.pop(context);
-                                  }),
-                                  child: const Text('OK'),
-                                ),
-                              ],
-                            ).show();
-                          });
-                        }
-                      }
-                    }
-                    else if (selectedOption == 'Complaint') {
-                      firebaseQuery
-                          .setComplaint(_auth.currentUser!.uid, _startDate,
-                          complaintController.text, selectedComplaint, defendantNameController.text, 
-                          defendantLocationController.text, locationController.text, contactNumberController.text)
-                          .then((value) =>
-                      {
-                        Alert(
+                  const SizedBox(height: 16),
+                  Visibility(
+                      visible:
+                      selectedOption == 'Identification Card' ? true : false,
+                      child: Column(
+                        children: [
+                          CoreDropdown(
+                            labelText: 'Select Gender',
+                            options: gender,
+                            selectedOption: selectedGender,
+                            onChanged: handleGenderChange,
+                            enabled: true,
+                          ),
+                          const SizedBox(height: 16),
+                          CoreTextfield(
+                            labelText: 'Age',
+                            controller: _age,
+                          ),
+                          const SizedBox(height: 16),
+                          CoreTextfield(
+                            labelText: 'Weight (kg)',
+                            controller: _weight,
+                          ),
+                          const SizedBox(height: 16),
+                          CoreTextfield(
+                            labelText: 'Height (cm)',
+                            controller: _height,
+                          ),
+                          const SizedBox(height: 16),
+                          CoreTextfield(
+                            labelText: 'Name Of Emergency Contact',
+                            controller: _NameEmCon,
+                          ),
+                          const SizedBox(height: 16),
+                          CoreTextfield(
+                            labelText: 'Contact Number',
+                            controller: _EmCon,
+                          ),
+                          const SizedBox(height: 16),
+                          // ElevatedButton(onPressed: (){
+                          //   print("Test");
+                          // }, child: const Text('Add Payment'))
+                        ],
+                      )),
+                  ElevatedButton(
+                    onPressed: () async {
+                      // Handle save appointment logic
+                      // firebaseQuery.appointOrRequestAppointment(
+                      //     {_certificateController.text, _startDate, _endDate},
+                      //     _auth.currentUser!.uid);
+                      if (selectedOption == 'Certificate') {
+                        bool hasPendingAppointments = await firebaseQuery.hasPendingAppointment(_auth.currentUser!.uid, 'barangayCertificate');
+      
+                        if (hasPendingAppointments) {
+                          Alert(
                             context: context,
-                            type: AlertType.success,
-                            desc: "Appointment success",
+                            type: AlertType.warning,
+                            desc: "You already have a pending appointment for Certificate.",
                             closeFunction: null,
                             buttons: [
                               DialogButton(
-                                  onPressed: (() {
-                                    Navigator.pop(context);
-                                  }),
-                                  child: const Text('OK'))
-                            ]).show()
-                      });
-                      uploadFile();
-                    } else {
-                      bool hasPendingAppointments = await firebaseQuery.hasPendingAppointment(_auth.currentUser!.uid, 'barangayID');
-
-                      if (hasPendingAppointments) {
-                        Alert(
-                          context: context,
-                          type: AlertType.warning,
-                          desc: "You already have a pending appointment for Barangay ID.",
-                          closeFunction: null,
-                          buttons: [
-                            DialogButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ).show();
-                      } else {
-                        bool shouldProceed = await showPaypalConfirmationDialog(context);
-
-                        if (shouldProceed) {
-                          BuildContext dialogContext = context;
-                          Map<String, dynamic>? result = await Navigator.push(
-                            dialogContext,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  PaypalCheckout(
-                                    // sandboxMode: true,
-                                      clientId: "AZxYyI4LNE-ZBt6A1GCScu_gXF-XoNbAZTjMj6EpH9SeNsf3TzH2rTdL7esMtmlYWtzJy6Ollbc8Rme0",
-                                      secretKey: "EISZmF-_bpCXTKC6vEk9aE9b4ZXJb86Oyz1Mys7wc-Lbcz-9GKIRLzDZSguW4bWwQmeLLqpxcJJOVsuY",
-                                      returnURL: "success.snippetcoder.com",
-                                      //Pwede to palitan base sa preference nyo
-                                      cancelURL: "cancel.snippetcoder.com",
-                                      //Pwede to palitan base sa preference nyo
-                                      transactions: const [
-                                        {
-                                          "amount": {
-                                            "total": '100.00',
-                                            "currency": "PHP",
-                                            "details": {
-                                              "subtotal": '100.00',
-                                            }
-                                          },
-                                          "description":
-                                          "Your Barangay ID order description.",
-                                          "item_list": {
-                                            "items": [
-                                              {
-                                                "name": "Barangay ID",
-                                                "quantity": 1,
-                                                "price": '100.00',
-                                                "currency": "PHP"
-                                              }
-                                            ],
-                                          }
-                                        }
-                                      ],
-                                      note: "Contact us for any questions on your order.",
-                                      onSuccess: (Map params) async {
-                                        // print("onSuccess: $params"); Uncomment if want nyo maprint ang whole transaction details:>
-
-                                        String transactionId = (params['data'] !=
-                                            null &&
-                                            params['data']['id'] != null)
-                                            ? params['data']['id']
-                                            : '';
-
-                                        await firebaseQuery.setBrgID(
-                                          _auth.currentUser!.uid,
-                                          _startDate,
-                                          selectedGender,
-                                          _age.text,
-                                          _weight.text,
-                                          _height.text,
-                                          '100.00',
-                                          transactionId,
-                                          _IdImageFile,
-                                        );
-                                        showTransactionReceipt(
-                                            context, transactionId);
-                                        selectedGender = 'Male';
-                                        _age.clear();
-                                        _weight.clear();
-                                        _height.clear();
-                                      },
-                                      onError: (error) {
-                                        print("onError: $error");
-                                      },
-                                      onCancel: () {
-                                        print('Transaction cancelled');
-                                    }
-                                 ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('OK'),
                               ),
-                            ); // **Warning lang yan**
+                            ],
+                          ).show();
+                        } else {
+                          bool shouldProceed = await showAppointmentConfirmationDialog(context);
+      
+                          if (shouldProceed) {
+                            firebaseQuery
+                                .setCertificate(_auth.currentUser!.uid, _startDate, purposeController.text, quantityController.text)
+                                .then((value) {
+                              Alert(
+                                context: context,
+                                type: AlertType.success,
+                                desc: "Appointment success",
+                                closeFunction: null,
+                                buttons: [
+                                  DialogButton(
+                                    onPressed: (() {
+                                      Navigator.pop(context);
+                                    }),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ).show();
+                            });
                           }
                         }
-                      };
-                    },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryColor,
-                  ),
-                  child: Text(
-                    selectedOption == 'Identification Card'
-                        ? 'Proceed to Payment'
-                        : 'Make Appointment',
-                    style: const TextStyle(
-                      color: Colors.white,
+                      } else if (selectedOption == 'Clearance') {
+                        bool hasPendingAppointments = await firebaseQuery.hasPendingAppointment(_auth.currentUser!.uid, 'barangayClearance');
+      
+                        if (hasPendingAppointments) {
+                          Alert(
+                            context: context,
+                            type: AlertType.warning,
+                            desc: "You already have a pending appointment for Clearance.",
+                            closeFunction: null,
+                            buttons: [
+                              DialogButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ).show();
+                        } else {
+                          bool shouldProceed = await showAppointmentConfirmationDialog(context);
+      
+                          if (shouldProceed) {
+                            firebaseQuery
+                                .setClearance(_auth.currentUser!.uid, _startDate, purposeController.text, quantityController.text)
+                                .then((value) {
+                              Alert(
+                                context: context,
+                                type: AlertType.success,
+                                desc: "Appointment success",
+                                closeFunction: null,
+                                buttons: [
+                                  DialogButton(
+                                    onPressed: (() {
+                                      Navigator.pop(context);
+                                    }),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ).show();
+                            });
+                          }
+                        }
+                      } else if (selectedOption == 'Complaint') {
+                        bool hasPendingAppointments = await firebaseQuery.hasPendingAppointment(_auth.currentUser!.uid, 'Complaints');
+      
+                        if (hasPendingAppointments) {
+                          Alert(
+                            context: context,
+                            type: AlertType.warning,
+                            desc: "You already have a pending appointment for Clearance.",
+                            closeFunction: null,
+                            buttons: [
+                              DialogButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ).show();
+                        } else {
+                          bool shouldProceed = await showAppointmentConfirmationDialog(context);
+      
+                          if (shouldProceed) {
+                              firebaseQuery
+                                  .setComplaint(_auth.currentUser!.uid, _startDate,
+                                  complaintController.text, selectedComplaint, defendantNameController.text, 
+                                  defendantLocationController.text, locationController.text, contactNumberController.text)
+                                  .then((value) {
+                                Alert(
+                                    context: context,
+                                    type: AlertType.success,
+                                    desc: "Appointment success",
+                                    closeFunction: null,
+                                    buttons: [
+                                      DialogButton(
+                                          onPressed: (() {
+                                            Navigator.pop(context);
+                                          }),
+                                          child: const Text('OK'))
+                                    ]
+                                  ).show();
+                              });
+                              uploadFile();
+                            }
+                          }
+                        } else {
+                        bool hasPendingAppointments = await firebaseQuery.hasPendingAppointment(_auth.currentUser!.uid, 'barangayID');
+      
+                        if (hasPendingAppointments) {
+                          Alert(
+                            context: context,
+                            type: AlertType.warning,
+                            desc: "You already have a pending appointment for Barangay ID.",
+                            closeFunction: null,
+                            buttons: [
+                              DialogButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ).show();
+                        } else {
+                          bool shouldProceed = await showPaypalConfirmationDialog(context);
+      
+                          if (shouldProceed) {
+                            BuildContext dialogContext = context;
+                            Map<String, dynamic>? result = await Navigator.push(
+                              dialogContext,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    PaypalCheckout(
+                                      // sandboxMode: true,
+                                        clientId: "AZxYyI4LNE-ZBt6A1GCScu_gXF-XoNbAZTjMj6EpH9SeNsf3TzH2rTdL7esMtmlYWtzJy6Ollbc8Rme0",
+                                        secretKey: "EISZmF-_bpCXTKC6vEk9aE9b4ZXJb86Oyz1Mys7wc-Lbcz-9GKIRLzDZSguW4bWwQmeLLqpxcJJOVsuY",
+                                        returnURL: "success.snippetcoder.com",
+                                        //Pwede to palitan base sa preference nyo
+                                        cancelURL: "cancel.snippetcoder.com",
+                                        //Pwede to palitan base sa preference nyo
+                                        transactions: const [
+                                          {
+                                            "amount": {
+                                              "total": '100.00',
+                                              "currency": "PHP",
+                                              "details": {
+                                                "subtotal": '100.00',
+                                              }
+                                            },
+                                            "description":
+                                            "Your Barangay ID order description.",
+                                            "item_list": {
+                                              "items": [
+                                                {
+                                                  "name": "Barangay ID",
+                                                  "quantity": 1,
+                                                  "price": '100.00',
+                                                  "currency": "PHP"
+                                                }
+                                              ],
+                                            }
+                                          }
+                                        ],
+                                        note: "Contact us for any questions on your order.",
+                                        onSuccess: (Map params) async {
+                                          // print("onSuccess: $params"); Uncomment if want nyo maprint ang whole transaction details:>
+      
+                                          String transactionId = (params['data'] !=
+                                              null &&
+                                              params['data']['id'] != null)
+                                              ? params['data']['id']
+                                              : '';
+      
+                                          await firebaseQuery.setBrgID(
+                                            _auth.currentUser!.uid,
+                                            _startDate,
+                                            selectedGender,
+                                            _age.text,
+                                            _weight.text,
+                                            _height.text,
+                                            '100.00',
+                                            transactionId,
+                                            _IdImageFile,
+                                          );
+                                          showTransactionReceipt(
+                                              context, transactionId);
+                                          selectedGender = 'Male';
+                                          _age.clear();
+                                          _weight.clear();
+                                          _height.clear();
+                                        },
+                                        onError: (error) {
+                                          print("onError: $error");
+                                        },
+                                        onCancel: () {
+                                          print('Transaction cancelled');
+                                      }
+                                   ),
+                                ),
+                              ); // **Warning lang yan**
+                            }
+                          }
+                        };
+                      },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryColor,
+                    ),
+                    child: Text(
+                      selectedOption == 'Identification Card'
+                          ? 'Proceed to Payment'
+                          : 'Make Appointment',
+                      style: const TextStyle(
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
