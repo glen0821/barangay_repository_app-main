@@ -3,7 +3,6 @@ import 'package:barangay_repository_app/firebase_query.dart';
 import 'package:barangay_repository_app/widgets/containers/dialog/dialogs.dart';
 import 'package:barangay_repository_app/widgets/core/core_dropdown/core_dropdown.dart';
 import 'package:barangay_repository_app/widgets/core/core_id_holder/core_id_holder.dart';
-import 'package:barangay_repository_app/widgets/core/core_image_video_holder/core_image_video_holder.dart';
 import 'package:barangay_repository_app/widgets/core/core_textfield/core_textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -44,7 +43,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
   String selectedGender = 'Male';
 
   File? _IdImageFile;
-  File? _ComplaintImageVideoFile;
 
   FirebaseQuery firebaseQuery = FirebaseQuery();
 
@@ -99,7 +97,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: _startDate,
-      firstDate: DateTime.now(),
+      firstDate: DateTime(2022),
       lastDate: DateTime(2025),
     );
 
@@ -135,34 +133,9 @@ class _AppointmentPageState extends State<AppointmentPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                 Text(
-                  selectedOption != 'Complaint' ?
-                  'Book a Appointment' : 'Submit a Complaint',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                Visibility(
-                  visible: selectedOption == 'Complaint',
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 10),
-                      CoreImageVideoHolder(
-                        onComplaintMediaChanged: (File? imageVideoFile) {
-                          if (imageVideoFile != null) {
-                            setState(() {
-                              _ComplaintImageVideoFile = imageVideoFile;
-                            });
-                          } else {
-                            print('Walang file na upload');
-                          }
-                        },
-                      ),
-                      SizedBox(height: 10),
-                      const Text(
-                        'Upload your proof in Video/Photo',
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
+                const Text(
+                  'Book a Appointment',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Visibility(
                     visible: selectedOption == 'Identification Card',
@@ -188,7 +161,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
                       ],
                     ),
                   ),
-
                 const SizedBox(height:16),
                 CoreDropdown(
                   labelText: 'Select an option',
@@ -385,17 +357,13 @@ class _AppointmentPageState extends State<AppointmentPage> {
                     else if (selectedOption == 'Complaint') {
                       firebaseQuery
                           .setComplaint(_auth.currentUser!.uid, _startDate,
-                          complaintController.text, _ComplaintImageVideoFile)
+                          complaintController.text)
                           .then((value) =>
                       {
-                        complaintController.clear(),
-                        setState(() {
-                          selectedOption = 'Clearance';
-                        }),
                         Alert(
                             context: context,
                             type: AlertType.success,
-                            desc: "Complaint submitted",
+                            desc: "Appointment success",
                             closeFunction: null,
                             buttons: [
                               DialogButton(
@@ -443,10 +411,10 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                       transactions: const [
                                         {
                                           "amount": {
-                                            "total": '0.01',
+                                            "total": '100.00',
                                             "currency": "PHP",
                                             "details": {
-                                              "subtotal": '0.01',
+                                              "subtotal": '100.00',
                                             }
                                           },
                                           "description":
@@ -456,7 +424,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                               {
                                                 "name": "Barangay ID",
                                                 "quantity": 1,
-                                                "price": '0.01',
+                                                "price": '100.00',
                                                 "currency": "PHP"
                                               }
                                             ],
@@ -484,7 +452,8 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                           transactionId,
                                           _IdImageFile,
                                         );
-                                        showTransactionReceipt(context, transactionId);
+                                        showTransactionReceipt(
+                                            context, transactionId);
                                         selectedGender = 'Male';
                                         _age.clear();
                                         _weight.clear();
@@ -509,8 +478,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                   child: Text(
                     selectedOption == 'Identification Card'
                         ? 'Proceed to Payment'
-                        : selectedOption == 'Complaint' ?
-                        'Submit Complaint' : 'Make Appointment',
+                        : 'Make Appointment',
                     style: const TextStyle(
                       color: Colors.white,
                     ),

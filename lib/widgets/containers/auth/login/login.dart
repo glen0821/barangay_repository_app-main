@@ -87,6 +87,7 @@ class _LoginPageState extends State<LoginPage> {
 
       loginFunctions.loginAcount().then((value) {
         if (value) {
+          Navigator.pop(context);
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => MainTab()));
         }
@@ -159,6 +160,53 @@ class _LoginPageState extends State<LoginPage> {
                   controller: passwordController,
                   obscureText: true,
                 ),
+                TextButton(
+                  onPressed: () {
+                    TextEditingController emailController = TextEditingController();
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Forgot Password'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextField(
+                                controller: emailController,
+                                decoration: InputDecoration(labelText: 'Enter your email'),
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('Cancel'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () async {
+                                String email = emailController.text.trim();
+                                try {
+                                  await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+                                  print("Email successfully sent");
+                                } catch (e) {
+                                  print("Error sending reset email: $e");
+                                }
+                                Navigator.pop(context);
+                              } ,
+                              child: Text('Reset Password'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Text(
+                    'Forgot Password?',
+                    style: TextStyle(color: Colors.red), // Set the color to red
+                  ),
+                ),
                 SizedBox(height: 16),
                 CoreButton(
                   text: 'Login',
@@ -178,6 +226,7 @@ class _LoginPageState extends State<LoginPage> {
                       });
                       if (value) {
                         storage.setItem('password', passwordController.text);
+                        Navigator.pop(context);
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => MainTab()));
                       }

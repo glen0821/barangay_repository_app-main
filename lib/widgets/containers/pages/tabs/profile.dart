@@ -75,234 +75,238 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     ResponsiveSizing responsive = ResponsiveSizing(context);
-    return Scaffold(
-        // appBar: AppBar(
-        //   title: Text('Edit Profile'),
-        //   actions: [],
-        // ),
-        resizeToAvoidBottomInset: true,
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                // height: responsive
-                //     .calc_height(MediaQuery.of(context).size.height * 0.3),
-                color: AppColors.primaryColor,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Column(
-                      children: [
-                        SizedBox(
-                          width: 150,
-                          height: 150,
-                          child: Image.asset(
-                            'assets/avatar.png',
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(_isEditMode ? Icons.done : Icons.edit),
-                          onPressed: () {
-                            if (_isEditMode) {
-                              // Save profile logic here
-                              String name = _nameController.text;
-                              String email = _emailController.text;
-                              String address = _addressController.text;
-                              String lengthOfStay =
-                                  _lengthOfStayController.text;
-                              String precintNumber =
-                                  _precintNumberController.text;
-                              String age = _ageController.text;
-                              if (name != '' ||
-                                  email != '' ||
-                                  address != '' ||
-                                  lengthOfStay != '' ||
-                                  precintNumber != '') {
-                                setState(() {
-                                  _isEditMode = false;
-                                });
-
-                                firebaseQuery.updateProfile(name, lengthOfStay,
-                                    precintNumber, address, _auth.currentUser, age);
-                              } else {
-                                Alert(
-                                    context: context,
-                                    type: AlertType.error,
-                                    desc:
-                                        "Profile information cannot be empty.",
-                                    closeFunction: null,
-                                    closeIcon: null,
-                                    buttons: [
-                                      DialogButton(
-                                          onPressed: (() =>
-                                              Navigator.pop(context)),
-                                          child: const Text('OK'))
-                                    ]).show();
-                              }
-                            } else {
-                              setState(() {
-                                _isEditMode = !_isEditMode;
-                              });
-                            }
-                          },
-                        ),
-                        // IconButton(
-                        //     onPressed: () {
-                        //       firebaseQuery.logout(_auth, (value) {
-                        //         Navigator.push(
-                        //             context,
-                        //             MaterialPageRoute(
-                        //                 builder: (context) => LoginPage()));
-                        //       });
-                        //     },
-                        //     icon: Icon(Icons.exit_to_app))
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+          // appBar: AppBar(
+          //   title: Text('Edit Profile'),
+          //   actions: [],
+          // ),
+          resizeToAvoidBottomInset: true,
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  // height: responsive
+                  //     .calc_height(MediaQuery.of(context).size.height * 0.3),
+                  color: AppColors.primaryColor,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(height: 16.0),
-                      buildProfileField(
-                        icon: Icons.abc_rounded,
-                        label: 'Name',
-                        controller: _nameController,
-                        enabled: _isEditMode,
-                      ),
-                      SizedBox(height: 20.0),
-                      buildProfileField(
-                        icon: Icons.pin_drop_rounded,
-                        label: 'Address',
-                        controller: _addressController,
-                        enabled: _isEditMode,
-                      ),
-                      SizedBox(height: 20.0),
-                      buildProfileField(
-                        icon: Icons.calendar_view_day_rounded,
-                        label: 'Length of Stay',
-                        controller: _lengthOfStayController,
-                        enabled: _isEditMode,
-                      ),
-                      SizedBox(height: 20.0),
-                      buildProfileField(
-                        icon: Icons.numbers_rounded,
-                        label: 'Precint Number',
-                        controller: _precintNumberController,
-                        enabled: _isEditMode,
-                      ),
-                      SizedBox(height: 20.0),
-                      buildProfileFieldDisabled(
-                        icon: Icons.email_rounded,
-                        label: 'Email',
-                        controller: _emailController,
-                      ),
-                      SizedBox(height: 20.0),
-                      Row(children: [
-                        Text('With Fingerprint'),
-                        Switch(value: _isFingerprintOn!, onChanged:(value) {
-                          setState(() {
-                            
-                            _isFingerprintOn = value;
-                          });
-                          if(value){
-                             storage.setItem('fingerprint', 'yes');
-                             storage.setItem('email', _emailController.text);
-                          }
-                          else{
-                            storage.clear();
-                          }
-                      },),
-                      ],),
-                      
-                      SizedBox(height: 20.0),
-                      SizedBox(
-                        width: responsive
-                            .calc_width(MediaQuery.of(context).size.width),
-                        child: ElevatedButton(
-                          onPressed: _isEditMode
-                              ? () {
-                                  // Save profile logic here
-                                  String name = _nameController.text;
-                                  String email = _emailController.text;
-                                  String address = _addressController.text;
-                                  String lengthOfStay =
-                                      _lengthOfStayController.text;
-                                  String precintNumber =
-                                      _precintNumberController.text;
-                                  String age = _ageController.text;
-                                  if (name != '' ||
-                                      email != '' ||
-                                      address != '' ||
-                                      lengthOfStay != '' ||
-                                      precintNumber != '') {
-                                    setState(() {
-                                      _isEditMode = false;
-                                    });
-
-                                    firebaseQuery.updateProfile(
-                                        name,
-                                        lengthOfStay,
-                                        precintNumber,
-                                        address,
-                                        _auth.currentUser,
-                                        age);
-                                  } else {
-                                    Alert(
-                                        context: context,
-                                        type: AlertType.error,
-                                        desc:
-                                            "Profile information cannot be empty.",
-                                        closeFunction: null,
-                                        closeIcon: null,
-                                        buttons: [
-                                          DialogButton(
-                                              onPressed: (() =>
-                                                  Navigator.pop(context)),
-                                              child: const Text('OK'))
-                                        ]).show();
-                                  }
+                      Column(
+                        children: [
+                          SizedBox(
+                            width: 150,
+                            height: 150,
+                            child: Image.asset(
+                              'assets/avatar.png',
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(_isEditMode ? Icons.done : Icons.edit),
+                            onPressed: () {
+                              if (_isEditMode) {
+                                // Save profile logic here
+                                String name = _nameController.text;
+                                String email = _emailController.text;
+                                String address = _addressController.text;
+                                String lengthOfStay =
+                                    _lengthOfStayController.text;
+                                String precintNumber =
+                                    _precintNumberController.text;
+                                String age = _ageController.text;
+                                if (name != '' ||
+                                    email != '' ||
+                                    address != '' ||
+                                    lengthOfStay != '' ||
+                                    precintNumber != '') {
+                                  setState(() {
+                                    _isEditMode = false;
+                                  });
+      
+                                  firebaseQuery.updateProfile(name, lengthOfStay,
+                                      precintNumber, address, _auth.currentUser, age);
+                                } else {
+                                  Alert(
+                                      context: context,
+                                      type: AlertType.error,
+                                      desc:
+                                          "Profile information cannot be empty.",
+                                      closeFunction: null,
+                                      closeIcon: null,
+                                      buttons: [
+                                        DialogButton(
+                                            onPressed: (() =>
+                                                Navigator.pop(context)),
+                                            child: const Text('OK'))
+                                      ]).show();
                                 }
-                              : null,
-                          child: Text('Save'),
+                              } else {
+                                setState(() {
+                                  _isEditMode = !_isEditMode;
+                                });
+                              }
+                            },
+                          ),
+                          // IconButton(
+                          //     onPressed: () {
+                          //       firebaseQuery.logout(_auth, (value) {
+                          //         Navigator.push(
+                          //             context,
+                          //             MaterialPageRoute(
+                          //                 builder: (context) => LoginPage()));
+                          //       });
+                          //     },
+                          //     icon: Icon(Icons.exit_to_app))
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 16.0),
+                        buildProfileField(
+                          icon: Icons.abc_rounded,
+                          label: 'Name',
+                          controller: _nameController,
+                          enabled: _isEditMode,
                         ),
-                      ),
-                      SizedBox(
+                        SizedBox(height: 20.0),
+                        buildProfileField(
+                          icon: Icons.pin_drop_rounded,
+                          label: 'Address',
+                          controller: _addressController,
+                          enabled: _isEditMode,
+                        ),
+                        SizedBox(height: 20.0),
+                        buildProfileField(
+                          icon: Icons.calendar_view_day_rounded,
+                          label: 'Length of Stay',
+                          controller: _lengthOfStayController,
+                          enabled: _isEditMode,
+                        ),
+                        SizedBox(height: 20.0),
+                        buildProfileField(
+                          icon: Icons.numbers_rounded,
+                          label: 'Precint Number',
+                          controller: _precintNumberController,
+                          enabled: _isEditMode,
+                        ),
+                        SizedBox(height: 20.0),
+                        buildProfileFieldDisabled(
+                          icon: Icons.email_rounded,
+                          label: 'Email',
+                          controller: _emailController,
+                        ),
+                        SizedBox(height: 20.0),
+                        Row(children: [
+                          Text('With Fingerprint'),
+                          Switch(value: _isFingerprintOn!, onChanged:(value) {
+                            setState(() {
+                              
+                              _isFingerprintOn = value;
+                            });
+                            if(value){
+                               storage.setItem('fingerprint', 'yes');
+                               storage.setItem('email', _emailController.text);
+                            }
+                            else{
+                              storage.clear();
+                            }
+                        },),
+                        ],),
+                        
+                        SizedBox(height: 20.0),
+                        SizedBox(
                           width: responsive
                               .calc_width(MediaQuery.of(context).size.width),
                           child: ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
-                                  if (states.contains(MaterialState.pressed)) {
-                                    return Colors.red;
+                            onPressed: _isEditMode
+                                ? () {
+                                    // Save profile logic here
+                                    String name = _nameController.text;
+                                    String email = _emailController.text;
+                                    String address = _addressController.text;
+                                    String lengthOfStay =
+                                        _lengthOfStayController.text;
+                                    String precintNumber =
+                                        _precintNumberController.text;
+                                    String age = _ageController.text;
+                                    if (name != '' ||
+                                        email != '' ||
+                                        address != '' ||
+                                        lengthOfStay != '' ||
+                                        precintNumber != '') {
+                                      setState(() {
+                                        _isEditMode = false;
+                                      });
+      
+                                      firebaseQuery.updateProfile(
+                                          name,
+                                          lengthOfStay,
+                                          precintNumber,
+                                          address,
+                                          _auth.currentUser,
+                                          age);
+                                    } else {
+                                      Alert(
+                                          context: context,
+                                          type: AlertType.error,
+                                          desc:
+                                              "Profile information cannot be empty.",
+                                          closeFunction: null,
+                                          closeIcon: null,
+                                          buttons: [
+                                            DialogButton(
+                                                onPressed: (() =>
+                                                    Navigator.pop(context)),
+                                                child: const Text('OK'))
+                                          ]).show();
+                                    }
                                   }
-                                  return Colors.red;
-                                },
+                                : null,
+                            child: Text('Save'),
+                          ),
+                        ),
+                        SizedBox(
+                            width: responsive
+                                .calc_width(MediaQuery.of(context).size.width),
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.resolveWith<Color>(
+                                  (Set<MaterialState> states) {
+                                    if (states.contains(MaterialState.pressed)) {
+                                      return Colors.red;
+                                    }
+                                    return Colors.red;
+                                  },
+                                ),
                               ),
-                            ),
-                            onPressed: () {
-                              firebaseQuery.logout(_auth, (value) {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => LoginPage()));
-                              });
-                            },
-                            child: Text('Logout'),
-                          ))
-                    ],
-                  ))
-            ],
-          ),
-        ));
+                              onPressed: () {
+                                firebaseQuery.logout(_auth, (value) {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => LoginPage()));
+                                });
+                              },
+                              child: Text('Logout'),
+                            ))
+                      ],
+                    ))
+              ],
+            ),
+          )),
+    );
     // return Scaffold(
     //   body: Container(
     //       width: MediaQuery.of(context).size.width,

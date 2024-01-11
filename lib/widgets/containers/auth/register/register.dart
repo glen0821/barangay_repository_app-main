@@ -42,7 +42,10 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _confirmpassVisible = false;
 
   // Length, Capital, Number
-  List<Color> _passTips = [Colors.red, Colors.red, Colors.red];
+  final List<Color> _passTips = [Colors.red, Colors.red, Colors.red];
+
+  static const List<String> allCivilStatus = ["Single", "Married", "Widowed", "Divorced"];
+  String? civilStatus;
 
   // No color = 0, Red = 1, Orange = 2, Green = 3
   int _passStatus = 0;
@@ -204,6 +207,38 @@ class _RegisterPageState extends State<RegisterPage> {
                         onDateChanged: (DateTime newDate) {
                           ageCalc();
                         },
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Container(
+                        height: 58,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black
+                          ),
+                          borderRadius: const BorderRadius.all(Radius.circular(5))
+                        ),
+                        alignment: Alignment.center,
+                        child: DropdownButton(
+                          value: civilStatus,
+                          items: allCivilStatus.map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );}
+                          ).toList(),
+                          hint: Text("Civil Status"),
+                          onChanged: (value) => {
+                            setState(() {
+                              civilStatus = value;
+                            })
+                          },
+                          isExpanded: true,
+                          borderRadius: const BorderRadius.all(Radius.circular(5)),
+                          underline: Container(height: 0),
+                          padding: const EdgeInsets.symmetric(horizontal: 7.8),
+                        ),
                       ),
                       SizedBox(
                         height: 16,
@@ -389,6 +424,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                         isLoading = false;
                                       });
                                       firebaseAuth.signOut();
+                                      Navigator.pop(context);
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(

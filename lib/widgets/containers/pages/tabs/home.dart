@@ -56,11 +56,14 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     ResponsiveSizing responsiveSizing = ResponsiveSizing(context);
-    return Scaffold(
-        body: Container(
-            padding: EdgeInsets.symmetric(
-                horizontal: responsiveSizing.calc_width(10),
-                vertical: responsiveSizing.calc_height(10)),
-            child: CoreCalendar()));
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+          body: Container(
+              padding: EdgeInsets.symmetric(
+                  horizontal: responsiveSizing.calc_width(10),
+                  vertical: responsiveSizing.calc_height(10)),
+              child: CoreCalendar())),
+    );
   }
 }
