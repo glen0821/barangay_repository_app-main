@@ -40,6 +40,22 @@ class _CoreIdHolderState extends State<CoreIdHolder> {
     }
   }
 
+  Future<void> _uploadProfileVideo() async {
+    try {
+      final pickedFile = await ImagePicker().pickVideo(source: ImageSource.gallery);
+
+      if (pickedFile == null) {
+        return;
+      }
+
+      final mediaFile = File(pickedFile.path);
+      // Handle the video file as needed
+    } catch (error) {
+      print('Error uploading video: $error');
+    }
+  }
+
+
 
   @override
   void dispose() {

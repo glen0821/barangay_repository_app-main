@@ -9,6 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as path;
 import 'dart:io';
 
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -290,38 +291,57 @@ class FirebaseQuery {
     return returnFlag;
   }
 
-    Future<bool> setComplaint(
-    String userId,
-    DateTime appointmentDate,
-    String complaint,
-  ) async {
+  Future<bool> setComplaint(
+      String userId,
+      DateTime appointmentDate,
+      String complaint,
+      File? complaintImageVideoFile,
+      ) async {
     FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
     bool returnFlag = false;
     DateTime currentTime = DateTime.now();
     int epochTime = currentTime.millisecondsSinceEpoch;
     final docRef = firestoreDB.collection("votersList").doc(userId);
-    docRef.get().then(
-      (DocumentSnapshot doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        final certificateDetails = <String, dynamic>{
-          "completeName": data['completeName'],
-          "lengthOfStay": data['lengthOfStay'],
-          "dateOfAppointment": DateFormat('yyy-M-d').format(DateTime(appointmentDate.year, appointmentDate.month, appointmentDate.day)),
-          "appointmentOwner": userId,
-          "complaint": complaint,
-          "address": data['completeAddress'],
-          "createdAt": DateFormat("MMMM d, yyy 'at h:mm:ss a UTC+8").format(DateTime(currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.minute, currentTime.second)),
-          "age": data['age']
-        };
-        firestoreDB
-            .collection("Complaints")
-            .doc(epochTime.toString())
-            .set(certificateDetails)
-            .then((value) => returnFlag = true)
-            .catchError((error) => print('error: $error'));
-      },
-      onError: (e) => print("Error getting document: $e"),
-    );
+
+    try {
+      DocumentSnapshot doc = await docRef.get();
+      if (doc.exists) {
+        final data = doc.data() as Map<String, dynamic>?;
+
+        if (data != null) {
+          if (complaintImageVideoFile != null) {
+            final extension = path.extension(complaintImageVideoFile.path);
+            final storageRef = FirebaseStorage.instance.ref().child('complaint_media/$userId/$epochTime$extension');
+            await storageRef.putFile(complaintImageVideoFile);
+            final complaintMediaUrl = await storageRef.getDownloadURL();
+
+            data['complaintMediaUrl'] = complaintMediaUrl;
+          }
+
+          final certificateDetails = <String, dynamic>{
+            "completeName": data['completeName'],
+            "complaintMediaUrl": data['complaintMediaUrl'],
+            "lengthOfStay": data['lengthOfStay'],
+            "dateOfAppointment": DateFormat('yyy-M-d').format(DateTime(appointmentDate.year, appointmentDate.month, appointmentDate.day)),
+            "appointmentOwner": userId,
+            "complaint": complaint,
+            "address": data['completeAddress'],
+            "createdAt": DateFormat("MMMM d, yyy 'at h:mm:ss a UTC+8").format(DateTime(currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.minute, currentTime.second)),
+            "age": data['age']
+          };
+
+          await firestoreDB
+              .collection("Complaints")
+              .doc(epochTime.toString())
+              .set(certificateDetails);
+
+          returnFlag = true;
+        }
+      }
+    } catch (e) {
+      print("Error getting document: $e");
+    }
+
     return returnFlag;
   }
 

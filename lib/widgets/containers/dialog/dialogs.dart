@@ -317,3 +317,33 @@ Future<bool> showAppointmentConfirmationDialog(BuildContext context) async {
 
   return shouldProceed;
 }
+
+Future<void> showMediaOptionDialog(BuildContext context, Function(bool isImage) onOptionSelected) async {
+  await showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ListTile(
+            leading: const Icon(Icons.image),
+            title: const Text('Pick Image'),
+            onTap: () {
+              Navigator.pop(context);
+              onOptionSelected(true);//true kapag image
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.videocam),
+            title: const Text('Pick Video'),
+            onTap: () {
+              Navigator.pop(context);
+              onOptionSelected(false); // false kapag video
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
