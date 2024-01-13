@@ -49,31 +49,56 @@ class _MainTabState extends State<MainTab> {
     });
   }
 
+  bool canPop = false;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: bottomBarPages.elementAt(_selectedIndex),
-        bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor: AppColors.primaryColor,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_month),
-              label: 'Home',
-              backgroundColor: Colors.red,
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.edit_calendar),
-              label: 'Apoointment',
-              backgroundColor: Colors.orange,
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Me',
-              backgroundColor: Colors.green,
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-        ));
+    return PopScope(
+      canPop: canPop,
+      onPopInvoked: (didPop) async {
+        if (_selectedIndex != 0) {
+          // If on any other page than home, set the selected index to 0 (home page)
+          // _pageController.animateToPage(0,
+          //     duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
+          setState(() {
+            _selectedIndex = 0;
+            canPop = false;
+          });
+        }
+        setState(() {
+          canPop = true;
+        });
+      },
+      child: Scaffold(
+          body: bottomBarPages.elementAt(_selectedIndex),
+          bottomNavigationBar: BottomNavigationBar(
+            selectedItemColor: AppColors.primaryColor,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_month),
+                label: 'Home',
+                backgroundColor: Colors.red,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.edit_calendar),
+                label: 'Apoointment',
+                backgroundColor: Colors.orange,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: 'Me',
+                backgroundColor: Colors.green,
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            onTap: (index) {
+              _onItemTapped(index);
+              setState(() {
+                canPop = false;
+              });
+            },
+          )),
+     );
   }
 }
+

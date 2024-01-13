@@ -1,13 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
+
 
 void showTransactionReceipt(BuildContext context, String transactionId,) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        contentPadding: EdgeInsets.all(15),
+        contentPadding: const EdgeInsets.all(15),
         title: Column(
           children: [
             Center(
@@ -16,7 +15,7 @@ void showTransactionReceipt(BuildContext context, String transactionId,) {
                   width: 200,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             const Text(
               'Transaction Receipt',
               style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
@@ -24,7 +23,7 @@ void showTransactionReceipt(BuildContext context, String transactionId,) {
             ),
           ],
         ),
-        content: Container(
+        content: SizedBox(
           height: 360,
           width: 600,
           child: SingleChildScrollView(
@@ -37,14 +36,14 @@ void showTransactionReceipt(BuildContext context, String transactionId,) {
                       contentPadding: const EdgeInsets.symmetric(horizontal: 5),
                       leading: Text(
                         label(index),
-                        style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+                        style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
                       ),
                       trailing: Text(
                         Value(index, transactionId),
                         style: const TextStyle(color: Colors.black, fontSize: 14),
                       ),
                     ),
-                    Divider(),
+                    const Divider(),
                   ],
                 );
               }),
@@ -55,18 +54,18 @@ void showTransactionReceipt(BuildContext context, String transactionId,) {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text(
+              const Text(
                 'Powered by: ',
                 style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Image.asset(
                 'assets/paypal.png',
                 width: 60,
                 height: 60,
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
 
             ],
           ),
@@ -76,8 +75,8 @@ void showTransactionReceipt(BuildContext context, String transactionId,) {
               transactionId = '';
             },
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF253B80)),
-              minimumSize: MaterialStateProperty.all(Size(double.infinity, 40)),
+              backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFF253B80)),
+              minimumSize: MaterialStateProperty.all(const Size(double.infinity, 40)),
             ),
             child: const Text(
               'CONFIRM',
@@ -112,7 +111,7 @@ String label(int index) {
 String Value(int index, String transactionId) {
   switch (index) {
     case 0:
-      return transactionId ?? '';
+      return transactionId;
     case 1:
       return dateToday();
     case 2:
@@ -141,7 +140,7 @@ Future<bool> showPaypalConfirmationDialog(BuildContext context) async {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        contentPadding: EdgeInsets.all(15),
+        contentPadding: const EdgeInsets.all(15),
         title: Column(
           children: [
             Center(
@@ -150,7 +149,7 @@ Future<bool> showPaypalConfirmationDialog(BuildContext context) async {
                 width: 200,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             const Text(
               'Confirmation',
               style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
@@ -158,10 +157,10 @@ Future<bool> showPaypalConfirmationDialog(BuildContext context) async {
             ),
           ],
         ),
-        content: Container(
+        content: const SizedBox(
           width: 600,
           height: 200,
-          child: const Padding(
+          child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -201,7 +200,7 @@ Future<bool> showPaypalConfirmationDialog(BuildContext context) async {
             },
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
-              minimumSize: MaterialStateProperty.all(Size(double.infinity, 40)),
+              minimumSize: MaterialStateProperty.all(const Size(double.infinity, 40)),
             ),
             child: const Text(
               'Cancel',
@@ -215,8 +214,8 @@ Future<bool> showPaypalConfirmationDialog(BuildContext context) async {
               Navigator.of(context).pop();
             },
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF253B80)),
-              minimumSize: MaterialStateProperty.all(Size(double.infinity, 40)),
+              backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFF253B80)),
+              minimumSize: MaterialStateProperty.all(const Size(double.infinity, 40)),
             ),
             child: const Text(
               'Proceed',
@@ -239,7 +238,7 @@ Future<bool> showAppointmentConfirmationDialog(BuildContext context) async {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        contentPadding: EdgeInsets.all(15),
+        contentPadding: const EdgeInsets.all(15),
         title: Column(
           children: [
             Center(
@@ -248,7 +247,7 @@ Future<bool> showAppointmentConfirmationDialog(BuildContext context) async {
                 width: 200,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             const Text(
               'Before proceeding',
               style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
@@ -256,10 +255,10 @@ Future<bool> showAppointmentConfirmationDialog(BuildContext context) async {
             ),
           ],
         ),
-        content: Container(
+        content: const SizedBox(
             width: 600,
             height: 100,
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -287,7 +286,7 @@ Future<bool> showAppointmentConfirmationDialog(BuildContext context) async {
             },
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
-              minimumSize: MaterialStateProperty.all(Size(double.infinity, 40)),
+              minimumSize: MaterialStateProperty.all(const Size(double.infinity, 40)),
             ),
             child: const Text(
               'Cancel',
@@ -301,8 +300,8 @@ Future<bool> showAppointmentConfirmationDialog(BuildContext context) async {
               Navigator.of(context).pop();
             },
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF253B80)),
-              minimumSize: MaterialStateProperty.all(Size(double.infinity, 40)),
+              backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFF253B80)),
+              minimumSize: MaterialStateProperty.all(const Size(double.infinity, 40)),
             ),
             child: const Text(
               'Proceed',

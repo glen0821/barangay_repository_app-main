@@ -15,17 +15,20 @@ class CoreTextfield extends StatefulWidget {
   final String? prefix;
   final TextInputType? keyboardType;
   final bool? obscureText;
+  final bool? mustRequire;
   const CoreTextfield(
       {Key? key,
-      required this.labelText,
-      this.inputFormatters,
-      this.enabled = true,
-      this.controller,
-      this.maxLength,
-      this.fontSize,
-      this.prefix,
-      this.keyboardType,
-      this.obscureText = false})
+        required this.labelText,
+        this.inputFormatters,
+        this.enabled = true,
+        this.controller,
+        this.maxLength,
+        this.fontSize,
+        this.prefix,
+        this.keyboardType,
+        this.obscureText = false,
+        this.mustRequire = true,
+      })
       : super(key: key);
   @override
   _CoreTextfieldState createState() => _CoreTextfieldState();
@@ -33,6 +36,7 @@ class CoreTextfield extends StatefulWidget {
 
 class _CoreTextfieldState extends State<CoreTextfield> {
   final FocusNode _focusNode = FocusNode();
+  Color outlineColor = AppColors.redCOlor;
 
   @override
   void dispose() {
@@ -44,7 +48,7 @@ class _CoreTextfieldState extends State<CoreTextfield> {
   Widget build(BuildContext context) {
     ResponsiveSizing responsiveSizing = new ResponsiveSizing(context);
     return SizedBox(
-        width: responsiveSizing.calc_width(365),// 311 original
+        width: responsiveSizing.calc_width(365), // 311 original
         child: TextField(
           obscureText: widget.obscureText!,
           maxLength: widget.maxLength ?? 32,
@@ -67,8 +71,8 @@ class _CoreTextfieldState extends State<CoreTextfield> {
               fontSize: _focusNode.hasFocus
                   ? responsiveSizing.calc_height(20)
                   : widget.fontSize == null
-                      ? responsiveSizing.calc_height(18)
-                      : widget.fontSize,
+                  ? responsiveSizing.calc_height(18)
+                  : widget.fontSize,
               color: Color(0xFF3e3e3e),
             ),
             disabledBorder: OutlineInputBorder(
@@ -76,7 +80,9 @@ class _CoreTextfieldState extends State<CoreTextfield> {
               borderRadius: BorderRadius.circular(4.0),
             ),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(width: 1.0),
+              borderSide: BorderSide(
+                  width: 1.0,
+                  color: widget.mustRequire! ? outlineColor : Colors.black),
               borderRadius: BorderRadius.circular(4.0),
             ),
             focusedBorder: OutlineInputBorder(
@@ -84,7 +90,9 @@ class _CoreTextfieldState extends State<CoreTextfield> {
               borderRadius: BorderRadius.circular(4.0),
             ),
             border: OutlineInputBorder(
-              borderSide: BorderSide(width: 1.0),
+              borderSide: BorderSide(
+                width: 1.0,
+              ),
               borderRadius: BorderRadius.circular(4.0),
             ),
             contentPadding: EdgeInsets.fromLTRB(
@@ -110,7 +118,17 @@ class _CoreTextfieldState extends State<CoreTextfield> {
           cursorWidth: 2.0,
           cursorHeight: 24.0,
           cursorRadius: Radius.circular(2.0),
-          onChanged: (value) {},
+          onChanged: (value) {
+            if (value.isEmpty && widget.mustRequire!) {
+              setState(() {
+                outlineColor = AppColors.redCOlor;
+              });
+            } else {
+              setState(() {
+                outlineColor = Colors.black;
+              });
+            }
+          },
           onTap: () {
             setState(() {
               _focusNode.requestFocus();

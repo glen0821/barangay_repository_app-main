@@ -112,11 +112,29 @@ class FirebaseQuery {
     return userReturn;
   }
 
-  Future<void> updateProfile(String name, String lengthOfStay,
-      String precintNumber, String address, User? user, String age) async {
-    await user?.updateDisplayName(name);
+  Future<void> updateProfile(
+      String firstName,
+      String lastName,
+      String middleInitial,
+      String suffixName,
+      String lengthOfStay,
+      String precintNumber,
+      String address,
+      User? user,
+      String age) async {
+    await user
+        ?.updateDisplayName("$firstName $lastName $middleInitial. $suffixName");
     await updateUserOtherCredentials(
-        name, lengthOfStay, precintNumber, address, user!.uid.toString(), age);
+        "$firstName $lastName $middleInitial. $suffixName",
+        firstName,
+        lastName,
+        middleInitial,
+        suffixName,
+        lengthOfStay,
+        precintNumber,
+        address,
+        user!.uid.toString(),
+        age);
   }
 
   //---------------------------- FIRESTORE QUERIES ------------------------------------//
@@ -137,6 +155,12 @@ class FirebaseQuery {
       String? docId,
       String age,
       String birthDate,
+      String firstName,
+      String lastName,
+      String middleInitial,
+      String suffixName,
+      String gender,
+      String civilStatus,
       ) async {
     FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
     bool returnFlag = false;
@@ -150,24 +174,42 @@ class FirebaseQuery {
       "createdAt": currentTime,
       "age": age,
       "birthDate": birthDate,
+      "firstName": firstName,
+      "lastName": lastName,
+      "middleInitial": middleInitial,
+      "suffixName": suffixName,
+      "gender": gender,
+      "civilStatus": civilStatus
     };
     firestoreDB
         .collection("votersList")
         .doc(docId)
         .set(credentials)
         .then((value) => returnFlag = true)
-        .catchError((error) => print('error: $error'));
+        .catchError((error) => debugPrint('error: $error'));
     return returnFlag;
   }
-
-  Future<void> updateUserOtherCredentials(String name, String lengthOfStay,
-      String precintNumber, String address, String documentId, String age) async {
+  Future<void> updateUserOtherCredentials(
+      String name,
+      String firstName,
+      String lastName,
+      String middleInitial,
+      String suffixName,
+      String lengthOfStay,
+      String precintNumber,
+      String address,
+      String documentId,
+      String age) async {
     FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
     DateTime currentTime = DateTime.now();
 
     final users = <String, dynamic>{
       "completeAddress": address,
       "completeName": name,
+      "firstName": firstName,
+      "lastName": lastName,
+      "middleInitial": middleInitial,
+      "suffixName": suffixName,
       "lengthOfStay": lengthOfStay,
       "precintNumber": precintNumber,
       "updatedAt": currentTime,

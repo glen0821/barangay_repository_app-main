@@ -15,6 +15,8 @@ import 'package:barangay_repository_app/widgets/core/core_button/core_button.dar
 import 'package:barangay_repository_app/widgets/core/core_textfield/core_textfield.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
+import '../../../core/core_dropdown/core_dropdown.dart';
+
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
@@ -45,11 +47,11 @@ class _RegisterPageState extends State<RegisterPage> {
   final List<Color> _passTips = [Colors.red, Colors.red, Colors.red];
 
   static const List<String> allCivilStatus = ["Single", "Married", "Widowed", "Divorced"];
-  String? civilStatus;
-
   // No color = 0, Red = 1, Orange = 2, Green = 3
   int _passStatus = 0;
   int _confirmPassStatus = 0;
+  String gender = 'Male';
+  String civilStatus = 'Single';
 
   @override
   void initState() {
@@ -105,9 +107,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     children: [
                       isLoading
                           ? Center(
-                              child:
-                                  CircularProgressIndicator(), // Add CircularProgressIndicator widget here
-                            )
+                        child:
+                        CircularProgressIndicator(), // Add CircularProgressIndicator widget here
+                      )
                           : Container(),
                       Text(
                         'Register your account here',
@@ -116,18 +118,17 @@ class _RegisterPageState extends State<RegisterPage> {
                       SizedBox(
                         height: 16,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 16.0,
                         children: [
                           SizedBox(
                             width: 220,
                             child: CoreTextfield(
                               labelText: 'First Name',
                               controller: firstNameController,
+                              keyboardType: TextInputType.name,
                             ),
-                          ),
-                          SizedBox(
-                            width: 16,
                           ),
                           SizedBox(
                             width: 70,
@@ -135,15 +136,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               labelText: 'M.I.',
                               controller: middleNameController,
                             ),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
+                          ),
                           SizedBox(
                             width: 220,
                             child: CoreTextfield(
@@ -152,33 +145,21 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),
                           SizedBox(
-                            width: 16,
-                          ),
-                          SizedBox(
                             width: 70,
                             child: CoreTextfield(
                               fontSize: 15,
                               labelText: 'Suffix',
                               controller: suffixNameController,
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 220,
-                            child: CoreTextfield(
-                              labelText: 'Email',
-                              controller: emailController,
+                              mustRequire: false,
                             ),
                           ),
                           SizedBox(
-                            width: 16,
+                            // width: 220,
+                            child: CoreTextfield(
+                              labelText: 'Email',
+                              controller: emailController,
+                              keyboardType: TextInputType.emailAddress,
+                            ),
                           ),
                           SizedBox(
                             width: 70,
@@ -197,6 +178,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       CoreTextfield(
                         labelText: 'Address',
                         controller: addressController,
+                        keyboardType: TextInputType.streetAddress,
                       ),
                       SizedBox(
                         height: 16,
@@ -211,34 +193,28 @@ class _RegisterPageState extends State<RegisterPage> {
                       SizedBox(
                         height: 16,
                       ),
-                      Container(
-                        height: 58,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black
-                          ),
-                          borderRadius: const BorderRadius.all(Radius.circular(5))
-                        ),
-                        alignment: Alignment.center,
-                        child: DropdownButton(
-                          value: civilStatus,
-                          items: allCivilStatus.map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );}
-                          ).toList(),
-                          hint: Text("Civil Status"),
-                          onChanged: (value) => {
-                            setState(() {
-                              civilStatus = value;
-                            })
-                          },
-                          isExpanded: true,
-                          borderRadius: const BorderRadius.all(Radius.circular(5)),
-                          underline: Container(height: 0),
-                          padding: const EdgeInsets.symmetric(horizontal: 7.8),
-                        ),
+                      CoreDropdown(
+                        labelText: "Gender",
+                        options: ['Male', 'Female'],
+                        selectedOption: gender,
+                        onChanged: (value) {
+                          setState(() {
+                            gender = value;
+                          });
+                        },
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      CoreDropdown(
+                        labelText: "Civil Status",
+                        options: ['Single', 'Married', 'Widowed', 'Divorced'],
+                        selectedOption: civilStatus,
+                        onChanged: (value) {
+                          setState(() {
+                            civilStatus = value;
+                          });
+                        },
                       ),
                       SizedBox(
                         height: 16,
@@ -251,8 +227,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         height: 16,
                       ),
                       CoreTextfield(
-                        labelText: 'Length of stay in San Nicolas',
+                        labelText: 'Length of stay(months) in San Nicolas',
                         controller: lengthOfStayController,
+                        keyboardType: TextInputType.number,
                       ),
                       SizedBox(height: 16.0),
                       Column(
@@ -260,19 +237,26 @@ class _RegisterPageState extends State<RegisterPage> {
                           TextField(
                             obscureText: !_passVisible,
                             decoration: InputDecoration(
-                              hintText: 'Password',
-                              border: OutlineInputBorder(),
-                              suffixIcon: IconButton(
-                                icon: Icon(_passVisible ? Icons.visibility : Icons.visibility_off),
-                                onPressed: () => {
-                                  setState(() {_passVisible = !_passVisible;})
-                                },
-                              )
-                            ),
+                                hintText: 'Password',
+                                border: OutlineInputBorder(),
+                                suffixIcon: IconButton(
+                                  icon: Icon(_passVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off),
+                                  onPressed: () => {
+                                    setState(() {
+                                      _passVisible = !_passVisible;
+                                    })
+                                  },
+                                )),
                             onChanged: (String text) {
                               setState(() {
-                                _passTips[1] = RegExp(r"[A-Z]").hasMatch(text) ? Colors.green : Colors.red;
-                                _passTips[2] = RegExp(r"[0-9]").hasMatch(text) ? Colors.green : Colors.red;
+                                _passTips[1] = RegExp(r"[A-Z]").hasMatch(text)
+                                    ? Colors.green
+                                    : Colors.red;
+                                _passTips[2] = RegExp(r"[0-9]").hasMatch(text)
+                                    ? Colors.green
+                                    : Colors.red;
 
                                 if (text.isEmpty) {
                                   _passTips[0] = Colors.red;
@@ -290,7 +274,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                 if (confirmPasswordController.text.isEmpty) {
                                   _confirmPassStatus = 0;
-                                } else if (_passStatus <= 1 || confirmPasswordController.text != text) {
+                                } else if (_passStatus <= 1 ||
+                                    confirmPasswordController.text != text) {
                                   _confirmPassStatus = 1;
                                 } else {
                                   _confirmPassStatus = 3;
@@ -301,9 +286,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: RegisterFunctions.passColor(_passStatus, _passStatus)
-                            ),
+                                borderRadius: BorderRadius.circular(15),
+                                color: RegisterFunctions.passColor(
+                                    _passStatus, _passStatus)),
                             height: 4,
                           )
                         ],
@@ -316,15 +301,18 @@ class _RegisterPageState extends State<RegisterPage> {
                           TextField(
                             obscureText: !_confirmpassVisible,
                             decoration: InputDecoration(
-                              hintText: 'Confirm Password',
-                              border: OutlineInputBorder(),
-                              suffixIcon: IconButton(
-                                icon: Icon(_confirmpassVisible ? Icons.visibility : Icons.visibility_off),
-                                onPressed: () => {
-                                  setState(() {_confirmpassVisible = !_confirmpassVisible;})
-                                }
-                              )
-                            ),
+                                hintText: 'Confirm Password',
+                                border: OutlineInputBorder(),
+                                suffixIcon: IconButton(
+                                    icon: Icon(_confirmpassVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off),
+                                    onPressed: () => {
+                                      setState(() {
+                                        _confirmpassVisible =
+                                        !_confirmpassVisible;
+                                      })
+                                    })),
                             onChanged: (String text) {
                               setState(() {
                                 if (text.isEmpty) {
@@ -340,9 +328,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: RegisterFunctions.passColor(_confirmPassStatus, _passStatus)
-                            ),
+                                borderRadius: BorderRadius.circular(15),
+                                color: RegisterFunctions.passColor(
+                                    _confirmPassStatus, _passStatus)),
                             height: 4,
                           )
                         ],
@@ -351,27 +339,21 @@ class _RegisterPageState extends State<RegisterPage> {
                         width: 406,
                         child: Text(
                           "• Password must be 8 characters long",
-                          style: TextStyle(
-                            color: _passTips[0]
-                          ),
+                          style: TextStyle(color: _passTips[0]),
                         ),
                       ),
                       SizedBox(
                         width: 406,
                         child: Text(
                           "• Password must have a capital letter",
-                          style: TextStyle(
-                            color: _passTips[1]
-                          ),
+                          style: TextStyle(color: _passTips[1]),
                         ),
                       ),
                       SizedBox(
                         width: 406,
                         child: Text(
                           "• Password must have a number",
-                          style: TextStyle(
-                            color: _passTips[2]
-                          ),
+                          style: TextStyle(color: _passTips[2]),
                         ),
                       ),
                       SizedBox(height: 12),
@@ -381,17 +363,75 @@ class _RegisterPageState extends State<RegisterPage> {
                             setState(() {
                               isLoading = true;
                             });
+                            if (emailController.text.isEmpty) {
+                              Alert(
+                                  context: context,
+                                  type: AlertType.error,
+                                  desc: "Email required",
+                                  closeFunction: null,
+                                  closeIcon: null,
+                                  buttons: [
+                                    DialogButton(
+                                        onPressed: (() => Navigator.pop(context)),
+                                        child: const Text('OK'))
+                                  ]).show();
+                              return;
+                            }
+                            if (firstNameController.text.isEmpty ||
+                                lastNameController.text.isEmpty ||
+                                middleNameController.text.isEmpty) {
+                              Alert(
+                                  context: context,
+                                  type: AlertType.error,
+                                  desc: "Complete name required",
+                                  closeFunction: null,
+                                  closeIcon: null,
+                                  buttons: [
+                                    DialogButton(
+                                        onPressed: (() => Navigator.pop(context)),
+                                        child: const Text('OK'))
+                                  ]).show();
+                              return;
+                            }
+                            if (precintNumberController.text.isEmpty) {
+                              Alert(
+                                  context: context,
+                                  type: AlertType.error,
+                                  desc: "Precint required",
+                                  closeFunction: null,
+                                  closeIcon: null,
+                                  buttons: [
+                                    DialogButton(
+                                        onPressed: (() => Navigator.pop(context)),
+                                        child: const Text('OK'))
+                                  ]).show();
+                              return;
+                            }
+                            if (lengthOfStayController.text.isEmpty) {
+                              Alert(
+                                  context: context,
+                                  type: AlertType.error,
+                                  desc: "Length of stay required",
+                                  closeFunction: null,
+                                  closeIcon: null,
+                                  buttons: [
+                                    DialogButton(
+                                        onPressed: (() => Navigator.pop(context)),
+                                        child: const Text('OK'))
+                                  ]).show();
+                              return;
+                            }
                             if (passwordController.text != '' &&
                                 confirmPasswordController.text != '') {
-                              RegisterFunctions registerFunctions = RegisterFunctions(
+                              RegisterFunctions registerFunctions =
+                              RegisterFunctions(
                                 emailController.text,
                                 passwordController.text,
                                 RegisterFunctions.nameConcat(
-                                  firstNameController.text, 
-                                  middleNameController.text,
-                                  lastNameController.text,
-                                  suffixNameController.text
-                                ),
+                                    firstNameController.text,
+                                    middleNameController.text,
+                                    lastNameController.text,
+                                    suffixNameController.text),
                                 firebaseQuery,
                                 context,
                                 ageController.text,
@@ -406,29 +446,33 @@ class _RegisterPageState extends State<RegisterPage> {
                                           builder: (context) => LoginPage()));
                                   firebaseQuery
                                       .setUserCredentials(
-                                          precintNumberController.text,
-                                          lengthOfStayController.text,
-                                          addressController.text,
-                                          RegisterFunctions.nameConcat(
-                                            firstNameController.text, 
-                                            middleNameController.text,
-                                            lastNameController.text,
-                                            suffixNameController.text
-                                          ),
-                                          firebaseAuth.currentUser?.uid, 
-                                          ageController.text,
-                                      birthDateController.text)
+                                      precintNumberController.text,
+                                      lengthOfStayController.text,
+                                      addressController.text,
+                                      RegisterFunctions.nameConcat(
+                                          firstNameController.text,
+                                          middleNameController.text,
+                                          lastNameController.text,
+                                          suffixNameController.text),
+                                      firebaseAuth.currentUser?.uid,
+                                      ageController.text,
+                                      birthDateController.text,
+                                      firstNameController.text,
+                                      lastNameController.text,
+                                      middleNameController.text,
+                                      suffixNameController.text,
+                                      gender,
+                                      civilStatus)
                                       .then((credentialValue) {
                                     if (credentialValue) {
                                       setState(() {
                                         isLoading = false;
                                       });
                                       firebaseAuth.signOut();
-                                      Navigator.pop(context);
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                          builder: (context) => LoginPage()));
+                                              builder: (context) => LoginPage()));
                                     }
                                   });
                                 }
@@ -437,7 +481,8 @@ class _RegisterPageState extends State<RegisterPage> {
                               Alert(
                                   context: context,
                                   type: AlertType.error,
-                                  desc: "Password and Confirm Password not Matched.",
+                                  desc:
+                                  "Password and Confirm Password not Matched.",
                                   closeFunction: null,
                                   closeIcon: null,
                                   buttons: [
@@ -449,11 +494,13 @@ class _RegisterPageState extends State<RegisterPage> {
                           })),
                       TextButton(
                           onPressed: (() {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => LoginPage()));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginPage()));
                           }),
                           child: Text('Already have an account? Sign-In instead'))
-                                    ],
+                    ],
                   ),
                 )),
           )),
@@ -468,11 +515,11 @@ class AgeCalculator {
 
     // Adjust age if the birthday hasn't occurred yet this year
     if (currentDate.month < birthDate.month ||
-        (currentDate.month == birthDate.month && currentDate.day < birthDate.day)) {
+        (currentDate.month == birthDate.month &&
+            currentDate.day < birthDate.day)) {
       age--;
     }
 
     return age;
   }
 }
-

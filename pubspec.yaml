@@ -58,6 +58,7 @@ dependencies:
   file_picker: ^6.1.1
   intl_phone_field: ^3.2.0
   flutter_signature_pad: ^3.0.1
+  fluttertoast: ^8.2.4
 
 dev_dependencies:
   flutter_test:
