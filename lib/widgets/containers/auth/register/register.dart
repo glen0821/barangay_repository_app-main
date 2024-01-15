@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, avoid_unnecessary_containers
 
+import 'package:barangay_repository_app/widgets/containers/auth/register/verify_email_page.dart';
 import 'package:intl/intl.dart';
 import 'package:barangay_repository_app/firebase_query.dart';
 import 'package:barangay_repository_app/widgets/containers/auth/login/login.dart';
@@ -359,135 +360,167 @@ class _RegisterPageState extends State<RegisterPage> {
                       SizedBox(height: 12),
                       CoreButton(
                           text: 'Register',
-                          onPressed: (() {
+                          onPressed: (() async {
                             setState(() {
                               isLoading = true;
                             });
-                            if (emailController.text.isEmpty) {
-                              Alert(
-                                  context: context,
-                                  type: AlertType.error,
-                                  desc: "Email required",
-                                  closeFunction: null,
-                                  closeIcon: null,
-                                  buttons: [
-                                    DialogButton(
-                                        onPressed: (() => Navigator.pop(context)),
-                                        child: const Text('OK'))
-                                  ]).show();
-                              return;
-                            }
-                            if (firstNameController.text.isEmpty ||
-                                lastNameController.text.isEmpty ||
-                                middleNameController.text.isEmpty) {
-                              Alert(
-                                  context: context,
-                                  type: AlertType.error,
-                                  desc: "Complete name required",
-                                  closeFunction: null,
-                                  closeIcon: null,
-                                  buttons: [
-                                    DialogButton(
-                                        onPressed: (() => Navigator.pop(context)),
-                                        child: const Text('OK'))
-                                  ]).show();
-                              return;
-                            }
-                            if (precintNumberController.text.isEmpty) {
-                              Alert(
-                                  context: context,
-                                  type: AlertType.error,
-                                  desc: "Precint required",
-                                  closeFunction: null,
-                                  closeIcon: null,
-                                  buttons: [
-                                    DialogButton(
-                                        onPressed: (() => Navigator.pop(context)),
-                                        child: const Text('OK'))
-                                  ]).show();
-                              return;
-                            }
-                            if (lengthOfStayController.text.isEmpty) {
-                              Alert(
-                                  context: context,
-                                  type: AlertType.error,
-                                  desc: "Length of stay required",
-                                  closeFunction: null,
-                                  closeIcon: null,
-                                  buttons: [
-                                    DialogButton(
-                                        onPressed: (() => Navigator.pop(context)),
-                                        child: const Text('OK'))
-                                  ]).show();
-                              return;
-                            }
-                            if (passwordController.text != '' &&
-                                confirmPasswordController.text != '') {
-                              RegisterFunctions registerFunctions =
-                              RegisterFunctions(
-                                emailController.text,
-                                passwordController.text,
-                                RegisterFunctions.nameConcat(
-                                    firstNameController.text,
-                                    middleNameController.text,
-                                    lastNameController.text,
-                                    suffixNameController.text),
-                                firebaseQuery,
-                                context,
-                                ageController.text,
-                                birthDateController.text,
-                              );
-                              registerFunctions.registerAcount().then((value) {
-                                print('value: $value');
-                                if (value) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => LoginPage()));
-                                  firebaseQuery
-                                      .setUserCredentials(
-                                      precintNumberController.text,
-                                      lengthOfStayController.text,
-                                      addressController.text,
-                                      RegisterFunctions.nameConcat(
-                                          firstNameController.text,
-                                          middleNameController.text,
-                                          lastNameController.text,
-                                          suffixNameController.text),
-                                      firebaseAuth.currentUser?.uid,
-                                      ageController.text,
-                                      birthDateController.text,
+                            bool emailVerified = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    VerifyUserEmailPage(
+                                        email: emailController.text),
+                              ),
+                            );
+
+                            if (emailVerified == true) {
+                              if (emailController.text.isEmpty) {
+                                Alert(
+                                    context: context,
+                                    type: AlertType.error,
+                                    desc: "Email required",
+                                    closeFunction: null,
+                                    closeIcon: null,
+                                    buttons: [
+                                      DialogButton(
+                                          onPressed: (() =>
+                                              Navigator.pop(context)),
+                                          child: const Text('OK'))
+                                    ]).show();
+                                return;
+                              }
+                              if (firstNameController.text.isEmpty ||
+                                  lastNameController.text.isEmpty ||
+                                  middleNameController.text.isEmpty) {
+                                Alert(
+                                    context: context,
+                                    type: AlertType.error,
+                                    desc: "Complete name required",
+                                    closeFunction: null,
+                                    closeIcon: null,
+                                    buttons: [
+                                      DialogButton(
+                                          onPressed: (() =>
+                                              Navigator.pop(context)),
+                                          child: const Text('OK'))
+                                    ]).show();
+                                return;
+                              }
+                              if (precintNumberController.text.isEmpty) {
+                                Alert(
+                                    context: context,
+                                    type: AlertType.error,
+                                    desc: "Precint required",
+                                    closeFunction: null,
+                                    closeIcon: null,
+                                    buttons: [
+                                      DialogButton(
+                                          onPressed: (() =>
+                                              Navigator.pop(context)),
+                                          child: const Text('OK'))
+                                    ]).show();
+                                return;
+                              }
+                              if (lengthOfStayController.text.isEmpty) {
+                                Alert(
+                                    context: context,
+                                    type: AlertType.error,
+                                    desc: "Length of stay required",
+                                    closeFunction: null,
+                                    closeIcon: null,
+                                    buttons: [
+                                      DialogButton(
+                                          onPressed: (() =>
+                                              Navigator.pop(context)),
+                                          child: const Text('OK'))
+                                    ]).show();
+                                return;
+                              }
+                              if (passwordController.text != '' &&
+                                  confirmPasswordController.text != '') {
+                                RegisterFunctions registerFunctions =
+                                RegisterFunctions(
+                                  emailController.text,
+                                  passwordController.text,
+                                  RegisterFunctions.nameConcat(
                                       firstNameController.text,
-                                      lastNameController.text,
                                       middleNameController.text,
-                                      suffixNameController.text,
-                                      gender,
-                                      civilStatus)
-                                      .then((credentialValue) {
-                                    if (credentialValue) {
-                                      setState(() {
-                                        isLoading = false;
-                                      });
-                                      firebaseAuth.signOut();
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => LoginPage()));
-                                    }
-                                  });
-                                }
-                              });
-                            } else {
+                                      lastNameController.text,
+                                      suffixNameController.text),
+                                  firebaseQuery,
+                                  context,
+                                  ageController.text,
+                                  birthDateController.text,
+                                );
+                                registerFunctions.registerAcount().then((
+                                    value) {
+                                  print('value: $value');
+                                  if (value) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => LoginPage()));
+                                    firebaseQuery
+                                        .setUserCredentials(
+                                        precintNumberController.text,
+                                        lengthOfStayController.text,
+                                        addressController.text,
+                                        RegisterFunctions.nameConcat(
+                                            firstNameController.text,
+                                            middleNameController.text,
+                                            lastNameController.text,
+                                            suffixNameController.text),
+                                        firebaseAuth.currentUser?.uid,
+                                        ageController.text,
+                                        birthDateController.text,
+                                        firstNameController.text,
+                                        lastNameController.text,
+                                        middleNameController.text,
+                                        suffixNameController.text,
+                                        gender,
+                                        civilStatus)
+                                        .then((credentialValue) {
+                                      if (credentialValue) {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                        firebaseAuth.signOut();
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    LoginPage()));
+                                      }
+                                    });
+                                  }
+                                });
+                              } else {
+                                Alert(
+                                    context: context,
+                                    type: AlertType.error,
+                                    desc:
+                                    "Password and Confirm Password not Matched.",
+                                    closeFunction: null,
+                                    closeIcon: null,
+                                    buttons: [
+                                      DialogButton(
+                                          onPressed: (() =>
+                                              Navigator.pop(context)),
+                                          child: const Text('OK'))
+                                    ]).show();
+                              }
+                            }else {
                               Alert(
                                   context: context,
                                   type: AlertType.error,
                                   desc:
-                                  "Password and Confirm Password not Matched.",
+                                  "Email is not verified",
                                   closeFunction: null,
                                   closeIcon: null,
                                   buttons: [
                                     DialogButton(
-                                        onPressed: (() => Navigator.pop(context)),
+                                        onPressed: (() =>
+                                            Navigator.pop(context)),
                                         child: const Text('OK'))
                                   ]).show();
                             }

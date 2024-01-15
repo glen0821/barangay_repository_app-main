@@ -40,11 +40,11 @@ dependencies:
   flutter_dotenv: ^5.1.0
   material_segmented_control: ^5.0.0
   local_auth: ^2.1.7
+  email_auth: 1.0.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   flutter_paypal_checkout: ^1.0.1
-  flutter_paypal: 0.2.0
   image_picker: ^1.0.2
   firebase_storage: ^11.2.6
   video_player: ^2.8.1
@@ -59,6 +59,7 @@ dependencies:
   intl_phone_field: ^3.2.0
   flutter_signature_pad: ^3.0.1
   fluttertoast: ^8.2.4
+
 
 dev_dependencies:
   flutter_test:

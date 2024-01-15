@@ -33,7 +33,6 @@ class VerificationSentPage extends StatelessWidget {
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  // Handle button press, e.g., navigate back to login page
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => LoginPage()));
                 },

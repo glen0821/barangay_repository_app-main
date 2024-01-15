@@ -708,6 +708,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
         buttons: [
           DialogButton(
             onPressed: () {
+              clearInputs();
               Navigator.pop(context);
             },
             child: const Text('OK'),
@@ -837,6 +838,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
         buttons: [
           DialogButton(
             onPressed: () {
+              clearInputs();
               Navigator.pop(context);
             },
             child: const Text('OK'),
@@ -993,6 +995,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
         buttons: [
           DialogButton(
             onPressed: () {
+              clearInputs();
               Navigator.pop(context);
             },
             child: const Text('OK'),
