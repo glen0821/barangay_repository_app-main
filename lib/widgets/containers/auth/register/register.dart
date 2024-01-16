@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, avoid_unnecessary_containers
 
+import 'dart:math';
+
 import 'package:barangay_repository_app/widgets/containers/auth/register/verify_email_page.dart';
 import 'package:intl/intl.dart';
 import 'package:barangay_repository_app/firebase_query.dart';
@@ -369,7 +371,9 @@ class _RegisterPageState extends State<RegisterPage> {
                               MaterialPageRoute(
                                 builder: (context) =>
                                     VerifyUserEmailPage(
-                                        email: emailController.text),
+                                        name: firstNameController.text,
+                                        email: emailController.text,
+                                        generatedOTP: Random().nextInt(900000) + 100000)
                               ),
                             );
 

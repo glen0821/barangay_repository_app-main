@@ -59,6 +59,7 @@ dependencies:
   intl_phone_field: ^3.2.0
   flutter_signature_pad: ^3.0.1
   fluttertoast: ^8.2.4
+  http: ^0.13.6
 
 
 dev_dependencies:
