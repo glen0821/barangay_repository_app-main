@@ -108,9 +108,9 @@ class _VerifyUserEmailPageState extends State<VerifyUserEmailPage> {
     required int userOTP,
   }) async {
 
-    final serviceId = 'service_k6io5gh';
-    final templateId = 'template_soz4xc5';
-    final userId = 'Vj7z4k6OjbWA05aEe';
+    final serviceId = 'service_7y9qywp';
+    final templateId = 'template_qozkw0w';
+    final userId = 'ibeb35tDR5BNabH0m';
 
     String otp = userOTP.toString();
 
